@@ -1,0 +1,1758 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="A classroom decision game: settlements race to become a city across six hardships of settling the Mesopotamian plain.">
+<style>
+  :root{ color-scheme:dark; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); }
+  body{ margin:0; font:14px system-ui, sans-serif; }
+  img{ max-width:100%; }
+  [hidden]{ display:none !important; }
+</style>
+<title>Before the Names</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Eczar:wght@500;600;700;800&family=Archivo:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --ground:#14110E; --surface:#1E1914; --surface2:#28211A; --surface3:#332A21;
+  --line:#3D342A; --line2:#4E4335;
+  --ink:#F2E9DB; --ink2:#C4B49A; --ink3:#8E7F69;
+  --lapis:#4E7BEE; --lapis-dim:#2E4A8F; --lapis-ghost:#1A2340;
+  --gold:#E0A93E; --gold-ghost:#3A2C12;
+  --clay:#C97A45;
+  --blood:#CF5A47; --blood-ghost:#3A1C17;
+  --green:#7CA85E;
+  --r:4px; --r2:10px;
+  --f-display:"Eczar",Georgia,serif;
+  --f-body:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --c-food:#D9A441; --c-people:#C97A45; --c-materials:#8E7F69;
+  --c-knowledge:#4E7BEE; --c-trust:#7CA85E;
+}
+*{box-sizing:border-box}
+html,body{background:var(--ground);}
+body{
+  margin:0;font-family:var(--f-body);color:var(--ink);
+  background:
+    radial-gradient(1100px 620px at 16% -12%, #241C15 0%, transparent 62%),
+    radial-gradient(900px 520px at 100% 0%, #1B2033 0%, transparent 58%),
+    var(--ground);
+  background-attachment:fixed;
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1300px;margin:0 auto;padding-inline:20px;padding-block:0 72px}
+h1,h2,h3,h4{font-family:var(--f-display);font-weight:700;margin:0;text-wrap:balance;line-height:1.15}
+button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
+select,input,textarea{font-family:inherit;font-size:inherit}
+.tnum{font-variant-numeric:tabular-nums}
+
+.mast{
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:40;
+  margin-inline:-20px;padding:14px 20px 0;
+  background:linear-gradient(var(--ground) 72%, rgba(20,17,14,.88) 100%);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+}
+.mast-top{display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap;margin-bottom:12px}
+.brand{display:flex;flex-direction:column;gap:2px;min-width:0}
+.brand .eyebrow{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);font-weight:600}
+.brand h1{font-size:clamp(23px,3.4vw,32px);letter-spacing:-.01em}
+.brand h1 em{font-style:normal;color:var(--gold)}
+.mast-meta{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pill{
+  display:inline-flex;align-items:center;gap:7px;padding:5px 11px;border-radius:999px;
+  border:1px solid var(--line2);background:var(--surface2);
+  font-size:11.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2);
+}
+.pill b{color:var(--ink);font-weight:700}
+.pill.live{border-color:var(--lapis-dim);background:var(--lapis-ghost);color:#A9C0F5}
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+  background:none;border:0;border-bottom:2px solid transparent;
+  padding:9px 14px 11px;color:var(--ink3);font-weight:600;font-size:13.5px;white-space:nowrap;
+}
+.tab:hover{color:var(--ink2)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--gold)}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r2);padding:20px}
+.sec-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:30px 0 14px}
+.sec-head h2{font-size:19px}
+.sec-head p{margin:0;color:var(--ink3);font-size:13px}
+.hint{color:var(--ink3);font-size:13px;margin:0}
+.label{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);font-weight:700}
+.btn{
+  border:1px solid var(--line2);background:var(--surface2);color:var(--ink);
+  padding:8px 15px;border-radius:var(--r);font-weight:600;font-size:13.5px;
+  transition:background .14s,border-color .14s;
+}
+.btn:hover{background:var(--surface3);border-color:var(--ink3)}
+.btn-primary{background:var(--lapis);border-color:var(--lapis);color:#0B1020}
+.btn-primary:hover{background:#6B92F2;border-color:#6B92F2}
+.btn-ghost{background:none;border-color:var(--line)}
+.btn-danger{color:var(--blood);border-color:var(--blood-ghost)}
+.btn-danger:hover{background:var(--blood-ghost);border-color:var(--blood)}
+.btn-good{color:var(--green);border-color:#2A3A20}
+.btn-good:hover{background:#1F2A17;border-color:var(--green)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-sm{padding:5px 10px;font-size:12px}
+select,input[type=text],textarea{
+  background:var(--surface2);border:1px solid var(--line2);color:var(--ink);
+  padding:7px 10px;border-radius:var(--r);
+}
+select:focus,input:focus,textarea:focus,button:focus-visible{outline:2px solid var(--lapis);outline-offset:1px}
+.delta{font-weight:700;font-variant-numeric:tabular-nums}
+.delta.pos{color:var(--gold)} .delta.neg{color:var(--blood)} .delta.zero{color:var(--ink3)}
+
+.role-chip{
+  display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;
+  font-size:11.5px;font-weight:600;border:1px solid var(--line2);background:var(--surface2);color:var(--ink2);
+}
+.role-dot{width:7px;height:7px;border-radius:50%;flex:none}
+.r-chief{background:var(--gold)} .r-priest{background:#A57BD8}
+.r-war{background:var(--blood)} .r-trader{background:var(--lapis)}
+.r-farmer{background:var(--green)} .r-crafter{background:var(--clay)}
+
+/* resources */
+.resbar{display:flex;gap:6px;flex-wrap:wrap}
+.res{
+  display:inline-flex;align-items:baseline;gap:6px;padding:4px 10px;border-radius:var(--r);
+  background:var(--surface2);border:1px solid var(--line);font-size:12px;font-variant-numeric:tabular-nums;
+}
+.res i{width:7px;height:7px;border-radius:50%;flex:none;align-self:center}
+.res b{font-weight:700;font-size:13.5px}
+.res .lbl{color:var(--ink3);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase}
+.i-food{background:var(--c-food)} .i-people{background:var(--c-people)}
+.i-materials{background:var(--c-materials)} .i-knowledge{background:var(--c-knowledge)}
+.i-trust{background:var(--c-trust)}
+.res.low{border-color:var(--blood);background:var(--blood-ghost)}
+.res.low b{color:var(--blood)}
+
+.scene{border:1px solid var(--line);border-radius:var(--r2);overflow:hidden;background:var(--surface)}
+.scene-head{padding:20px 22px 18px;border-bottom:1px solid var(--line);
+  background:linear-gradient(135deg,var(--surface2),var(--surface))}
+.scene-num{font-family:var(--f-display);font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--gold);font-weight:700;display:block;margin-bottom:5px}
+.scene-head h2{font-size:clamp(22px,3.2vw,29px);margin-bottom:7px}
+.scene-anchor{color:var(--ink3);font-size:12.5px;font-style:italic;margin:0}
+.scene-body{padding:20px 22px}
+.scene-body p{margin:0 0 13px;max-width:66ch;color:var(--ink2)}
+.scene-body p:last-child{margin-bottom:0}
+.scene-body strong{color:var(--ink);font-weight:600}
+.keyskills{display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+  margin-top:16px;padding-top:15px;border-top:1px dashed var(--line)}
+.decklinks{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-top:11px}
+.slideref{display:inline-flex;align-items:baseline;gap:6px;padding:3px 10px;border-radius:999px;
+  font-size:11.5px;border:1px solid var(--lapis-dim);background:var(--lapis-ghost);color:#A9C0F5}
+.slideref b{color:var(--lapis);font-weight:700}
+
+.choices{display:grid;gap:11px;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));margin-top:18px}
+.choice{border:1px solid var(--line);border-radius:var(--r2);padding:15px 16px;background:var(--surface2);
+  display:flex;flex-direction:column;gap:8px}
+.choice-key{font-family:var(--f-display);font-size:15px;font-weight:800;color:var(--gold);
+  display:flex;align-items:center;gap:9px}
+.choice-key span{width:23px;height:23px;border-radius:50%;background:var(--gold-ghost);border:1px solid var(--gold);
+  display:grid;place-items:center;font-size:12px;flex:none}
+.choice h4{font-size:15px;color:var(--ink);font-family:var(--f-body);font-weight:600;line-height:1.35}
+.choice .outcome{margin:0;font-size:12.5px;color:var(--ink2);border-top:1px dashed var(--line2);padding-top:9px}
+.choice .outcome b{color:var(--gold);font-weight:700}
+
+.grouprow{border:1px solid var(--line);border-radius:var(--r2);background:var(--surface);
+  padding:15px 16px;display:flex;flex-direction:column;gap:12px}
+.grouprow.locked{border-color:var(--lapis-dim);background:linear-gradient(var(--surface),var(--lapis-ghost))}
+.gr-head{display:flex;align-items:center;gap:11px;flex-wrap:wrap}
+.gr-name{font-family:var(--f-display);font-size:18px;font-weight:700}
+.gr-school{font-size:11px;color:var(--ink3);letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+.gr-controls{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.ctl{display:flex;flex-direction:column;gap:6px;min-width:0}
+.seg{display:flex;gap:3px;flex-wrap:wrap}
+.seg button{border:1px solid var(--line2);background:var(--surface2);padding:6px 12px;border-radius:var(--r);
+  font-size:13px;font-weight:600;color:var(--ink2)}
+.seg button[aria-pressed="true"]{background:var(--lapis);border-color:var(--lapis);color:#0B1020}
+.seg.warn button[aria-pressed="true"]{background:var(--blood);border-color:var(--blood);color:#1A0C0A}
+.skillbox{display:flex;gap:7px;flex-wrap:wrap}
+.skilltog{display:inline-flex;align-items:center;gap:7px;padding:6px 11px;border-radius:var(--r);
+  border:1px solid var(--line2);background:var(--surface2);font-size:12.5px;font-weight:600;color:var(--ink2)}
+.skilltog[aria-pressed="true"]{border-color:var(--gold);background:var(--gold-ghost);color:var(--gold)}
+.skilltog.absent{border-color:var(--blood-ghost);background:var(--blood-ghost);color:var(--blood);
+  cursor:not-allowed;text-decoration:line-through}
+.breakdown{display:flex;gap:6px;flex-wrap:wrap;padding-top:11px;border-top:1px dashed var(--line);
+  font-size:11.5px;color:var(--ink3)}
+.bd{padding:3px 8px;border-radius:var(--r);background:var(--surface2);border:1px solid var(--line);
+  font-variant-numeric:tabular-nums}
+.bd b{font-weight:700}
+.bd.pos b{color:var(--gold)} .bd.neg b{color:var(--blood)}
+
+.standings{display:flex;flex-direction:column;gap:9px}
+.stand{border:1px solid var(--line);border-radius:var(--r2);padding:13px 16px;background:var(--surface);
+  display:flex;flex-direction:column;gap:9px}
+.stand.lead{border-color:var(--gold);background:linear-gradient(90deg,var(--gold-ghost),var(--surface) 46%)}
+.stand-top{display:grid;grid-template-columns:34px 1fr auto;gap:14px;align-items:center}
+.rank{font-family:var(--f-display);font-size:19px;font-weight:800;color:var(--ink3);text-align:center}
+.stand.lead .rank{color:var(--gold)}
+.stand-score{font-family:var(--f-display);font-size:23px;font-weight:800;font-variant-numeric:tabular-nums}
+
+.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r2)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:13.5px}
+th,td{padding:9px 13px;text-align:left;border-bottom:1px solid var(--line)}
+th{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);
+  font-weight:700;background:var(--surface2);position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+
+.setup-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(330px,1fr))}
+.gcard{border:1px solid var(--line);border-radius:var(--r2);background:var(--surface);padding:16px;
+  display:flex;flex-direction:column;gap:11px}
+.gcard h3{font-size:17px;display:flex;align-items:center;gap:9px}
+.roster{display:flex;flex-direction:column;gap:5px;margin:0;padding:0;list-style:none}
+.roster li{display:flex;align-items:center;gap:9px;padding:6px 9px;border-radius:var(--r);
+  background:var(--surface2);border:1px solid transparent;font-size:13.5px}
+.roster li.dup-good{border-color:var(--green)}
+.roster li.dup-bad{border-color:var(--blood)}
+.roster li .nm{font-weight:600}
+.roster li .x{background:none;border:0;color:var(--ink3);padding:0 2px;font-size:15px;line-height:1}
+.roster li .x:hover{color:var(--blood)}
+.gaps{font-size:12px;color:var(--blood);display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.gaps .ok{color:var(--green)}
+.addrow{display:flex;gap:6px;flex-wrap:wrap}
+.addrow input{flex:1;min-width:110px}
+
+.comp{display:flex;flex-direction:column;gap:5px;padding:10px 12px;border-radius:var(--r);
+  background:var(--surface2);border:1px solid var(--line)}
+.comp-line{display:flex;gap:8px;align-items:baseline;font-size:12px}
+.comp-line .what{flex:1;min-width:0;color:var(--ink2)}
+.comp-line .eff{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+.comp-line.good .eff{color:var(--green)}
+.comp-line.bad .eff{color:var(--blood)}
+.comp-line.council{border-top:1px dashed var(--line2);padding-top:6px;margin-top:2px}
+.comp-line.council .what{color:var(--gold);font-weight:600}
+.comp-line.council .eff{color:var(--gold)}
+
+.coop{border:1px solid var(--line);border-radius:var(--r2);padding:17px 18px;background:var(--surface)}
+.coop h3{font-size:16px;margin-bottom:5px}
+.coop-form{display:flex;gap:9px;flex-wrap:wrap;align-items:flex-end;margin-top:13px}
+.coop-form input[type=text]{width:74px}
+.evlog{margin:13px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+.evlog li{font-size:12.5px;color:var(--ink2);padding:7px 11px;border-radius:var(--r);
+  background:var(--surface2);border-left:2px solid var(--line2);display:flex;gap:9px;align-items:baseline}
+.evlog li b{color:var(--ink)}
+.evlog li.trade{border-left-color:var(--lapis)}
+.evlog li.ally{border-left-color:var(--green)}
+.evlog li.defect{border-left-color:var(--blood)}
+.evlog .undo{margin-left:auto;background:none;border:0;color:var(--ink3);font-size:11px;text-decoration:underline}
+.evlog .undo:hover{color:var(--blood)}
+
+.defect-panel{border:1px solid var(--blood-ghost);border-radius:var(--r2);
+  background:linear-gradient(var(--surface),#241713);padding:17px 18px}
+.defect-panel h3{font-size:16px;color:var(--blood);margin-bottom:5px}
+
+.epi{border:1px solid var(--line);border-radius:var(--r2);padding:18px 20px;background:var(--surface);
+  display:flex;flex-direction:column;gap:9px}
+.epi h3{font-size:18px}
+.epi .fate{font-family:var(--f-display);font-size:12px;letter-spacing:.17em;text-transform:uppercase;font-weight:700}
+.epi p{margin:0;color:var(--ink2);font-size:13.5px;max-width:70ch}
+.f-intact{color:var(--gold)} .f-hub{color:var(--lapis)}
+.f-broken{color:var(--blood)} .f-emptied{color:var(--ink3)}
+
+.rules-grid{display:grid;gap:13px;grid-template-columns:repeat(auto-fit,minmax(265px,1fr))}
+.rule{border:1px solid var(--line);border-left:2px solid var(--lapis);border-radius:var(--r2);
+  padding:15px 16px;background:var(--surface)}
+.rule h4{font-size:14.5px;margin-bottom:7px;font-family:var(--f-body);font-weight:700}
+.rule ul{margin:0;padding-left:17px;font-size:13px;color:var(--ink2)}
+.rule li{margin-bottom:4px}
+.rule li b{color:var(--gold);font-variant-numeric:tabular-nums}
+.rule li b.neg{color:var(--blood)}
+.rule.r-gold{border-left-color:var(--gold)} .rule.r-blood{border-left-color:var(--blood)}
+.rule.r-clay{border-left-color:var(--clay)} .rule.r-green{border-left-color:var(--green)}
+.prompt-list{counter-reset:q;margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:11px}
+.prompt-list li{counter-increment:q;padding-left:38px;position:relative;font-size:14px;color:var(--ink2);max-width:74ch}
+.prompt-list li::before{content:counter(q);position:absolute;left:0;top:0;width:25px;height:25px;border-radius:50%;
+  background:var(--lapis-ghost);border:1px solid var(--lapis-dim);color:var(--lapis);
+  display:grid;place-items:center;font-size:12px;font-weight:700;font-family:var(--f-display)}
+.prompt-list li b{color:var(--ink);font-weight:600}
+.note{border-left:2px solid var(--gold);background:var(--gold-ghost);padding:12px 15px;
+  border-radius:0 var(--r2) var(--r2) 0;font-size:13px;color:var(--ink2);margin:0}
+.note b{color:var(--gold)}
+.note.warn{border-left-color:var(--blood);background:var(--blood-ghost)}
+.note.warn b{color:var(--blood)}
+.stack{display:flex;flex-direction:column;gap:13px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.spacer{flex:1}
+.save-state{font-size:11.5px;color:var(--ink3)}
+
+/* ---- projector board ---- */
+.board{padding-top:6px}
+.board-head{display:flex;gap:20px;align-items:flex-end;flex-wrap:wrap;margin:6px 0 18px}
+.board-eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.board-head h2{font-size:clamp(24px,3.6vw,36px);margin-top:4px}
+.board-goal{margin-left:auto;text-align:right;display:flex;flex-direction:column;gap:2px}
+.board-goal strong{font-family:var(--f-display);font-size:20px;color:var(--ink)}
+.board-goal .hint{font-size:12px}
+.board-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.bcard{border:1px solid var(--line);border-radius:var(--r2);background:var(--surface);
+  padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.bcard.lead{border-color:var(--gold)}
+.bcard.is-city{border-color:var(--gold);background:linear-gradient(var(--gold-ghost),var(--surface) 55%)}
+.bcard-top{display:flex;align-items:center;gap:12px}
+.brank{font-family:var(--f-display);font-size:22px;font-weight:800;color:var(--ink3);min-width:24px}
+.bcard.lead .brank{color:var(--gold)}
+.bname{display:flex;flex-direction:column;min-width:0;flex:1}
+.bname strong{font-family:var(--f-display);font-size:22px;font-weight:700;line-height:1.1}
+.bsub{font-size:11.5px;color:var(--ink3);letter-spacing:.03em}
+.bscore{font-family:var(--f-display);font-size:34px;font-weight:800;font-variant-numeric:tabular-nums;
+  line-height:1;margin-left:auto}
+.marks{display:flex;flex-direction:column;gap:4px}
+.mark{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--ink3)}
+.mark i{width:11px;height:11px;border-radius:3px;border:1px solid var(--line2);background:var(--surface2);flex:none}
+.mark em{margin-left:auto;font-style:normal;font-size:11px;color:var(--ink3);opacity:.75}
+.mark.on{color:var(--ink)}
+.mark.on i{background:var(--gold);border-color:var(--gold)}
+.bfate{font-size:13px;color:var(--ink2);padding-top:10px;border-top:1px dashed var(--line)}
+.bfate strong{color:var(--gold);font-weight:700}
+.bfate.quiet{color:var(--ink3);font-style:italic}
+.bfate.city{color:var(--gold);font-family:var(--f-display);font-size:15px;font-weight:700}
+.bverdict{font-size:12px;padding:6px 10px;border-radius:var(--r);background:var(--surface2);
+  border-left:2px solid var(--line2)}
+.bverdict.good{border-left-color:var(--green);color:var(--ink2)}
+.bverdict.bad{border-left-color:var(--blood);color:var(--ink2)}
+.bverdict.flat{color:var(--ink3)}
+.board-events{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:16px;
+  padding-top:14px;border-top:1px solid var(--line)}
+.bev{font-size:12px;padding:4px 11px;border-radius:999px;background:var(--surface2);
+  border:1px solid var(--line2);color:var(--ink2)}
+.bev.trade{border-color:var(--lapis-dim);color:#A9C0F5}
+.bev.ally{border-color:#2A3A20;color:var(--green)}
+.bev.bad{border-color:var(--blood-ghost);color:var(--blood)}
+@media (min-width:1100px){
+  .board .bname strong{font-size:25px}
+  .board .bscore{font-size:40px}
+  .board .mark{font-size:13.5px}
+}
+
+
+/* ---- poll (student device) ---- */
+.pollhead{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.pollhead h2{font-size:26px}
+.pollpick{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.pollgroup{border:1px solid var(--line2);background:var(--surface);border-radius:var(--r2);
+  padding:18px 16px;text-align:left;display:flex;flex-direction:column;gap:3px}
+.pollgroup:hover{border-color:var(--gold);background:var(--surface2)}
+.pollgroup strong{font-family:var(--f-display);font-size:19px}
+.pollgroup span{font-size:12px;color:var(--ink3)}
+.pollopts{display:flex;flex-direction:column;gap:10px}
+.pollopt{display:flex;gap:14px;align-items:flex-start;text-align:left;width:100%;
+  border:1px solid var(--line2);background:var(--surface);border-radius:var(--r2);padding:16px 18px}
+.pollopt:hover{border-color:var(--ink3);background:var(--surface2)}
+.pollopt.chosen{border-color:var(--gold);background:var(--gold-ghost)}
+.pollopt .pk{font-family:var(--f-display);font-size:19px;font-weight:800;color:var(--gold);
+  width:34px;height:34px;border-radius:50%;border:1px solid var(--gold);display:grid;place-items:center;flex:none}
+.pollopt .pt{font-size:16px;line-height:1.4;padding-top:5px}
+
+/* ---- board tally ---- */
+.tally{margin-top:18px;padding-top:15px;border-top:1px solid var(--line)}
+.tally-head{display:flex;align-items:baseline;gap:12px;margin-bottom:10px}
+.tally-head .hint{margin-left:auto}
+.tally-cols{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.tcol{border:1px solid var(--line);border-radius:var(--r2);background:var(--surface);padding:12px 14px;
+  display:flex;flex-direction:column;gap:7px}
+.tcol.best{border-color:var(--gold);background:linear-gradient(var(--gold-ghost),var(--surface) 60%)}
+.tk{font-family:var(--f-display);font-size:17px;font-weight:800;color:var(--gold);
+  display:flex;align-items:center;gap:8px}
+.tk span{margin-left:auto;font-size:24px;color:var(--ink);font-variant-numeric:tabular-nums}
+.tt{margin:0;font-size:12px;color:var(--ink3);line-height:1.35}
+.tnames{display:flex;gap:5px;flex-wrap:wrap}
+.tname{font-size:11.5px;padding:2px 8px;border-radius:999px;background:var(--surface2);
+  border:1px solid var(--line2);color:var(--ink2)}
+.tname.empty{color:var(--ink3);border-style:dashed}
+.teff{font-size:11px;color:var(--gold);font-variant-numeric:tabular-nums;
+  padding-top:6px;border-top:1px dashed var(--line2)}
+
+@media (max-width:640px){
+  .wrap{padding-inline:16px}
+  .mast{margin-inline:-16px;padding-inline:16px}
+  .stand-top{grid-template-columns:26px 1fr;gap:10px}
+  .stand-score{grid-column:2;justify-self:start}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <div class="mast-top">
+      <div class="brand">
+        <span class="eyebrow">World History · Mesopotamia Unit · Synthesis</span>
+        <h1>Before the <em>Names</em></h1>
+      </div>
+      <div class="mast-meta">
+        <span class="pill live">Round <b id="roundPill">1</b> / 6</span>
+        <span class="pill">Settlements <b id="cityPill">5</b></span>
+        <span class="pill">Students <b id="stuPill">0 / 27</b></span>
+        <span class="save-state" id="saveState">·</span>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button class="tab" role="tab" data-tab="play" aria-selected="true">Play</button>
+      <button class="tab" role="tab" data-tab="board" aria-selected="false">Board</button>
+      <button class="tab" role="tab" data-tab="poll" aria-selected="false">Group Poll</button>
+      <button class="tab" role="tab" data-tab="scenarios" aria-selected="false">All Six Rounds</button>
+      <button class="tab" role="tab" data-tab="standings" aria-selected="false">Standings</button>
+      <button class="tab" role="tab" data-tab="setup" aria-selected="false">Settlements &amp; Roles</button>
+      <button class="tab" role="tab" data-tab="rules" aria-selected="false">Rules</button>
+      <button class="tab" role="tab" data-tab="writing" aria-selected="false">Writing Task</button>
+    </nav>
+  </header>
+  <main id="view"></main>
+</div>
+
+<script>
+"use strict";
+
+/* ===================== RESOURCES ===================== */
+const RES = [
+  {id:"food",      name:"Food",      cls:"i-food",      note:"Barley in the pit. Surplus becomes people."},
+  {id:"people",    name:"People",    cls:"i-people",    note:"The scarcest thing on the plain. Scores triple."},
+  {id:"materials", name:"Materials", cls:"i-materials", note:"Brick, reed, stone and metal you had to import."},
+  {id:"knowledge", name:"Knowledge", cls:"i-knowledge", note:"Never decays, and giving it away costs nothing."},
+  {id:"trust",     name:"Trust",     cls:"i-trust",     note:"A standing, not a stockpile — it caps at 100. Below 30 nobody will ally with you."}
+];
+const START = {food:100, people:80, materials:50, knowledge:20, trust:70};
+const FOOD_CAP = 100;        // food above this converts
+const FOOD_PER_PERSON = 20;  // surplus food per new person
+const ALLY_FLOOR = 30;       // trust needed to form an alliance
+const PEOPLE_WEIGHT = 3;
+
+/* ===================== ROLES ===================== */
+const ROLES = [
+  {id:"chief",  name:"Chief",         sum:"lugal",      cls:"r-chief",  governs:"trust",
+   power:"Calls the vote and owns the outcome.", kind:"rival",
+   dup:{trust:-15}, dup3:{trust:-25},
+   why:"Two people with the final call means nobody has it."},
+  {id:"priest", name:"High Priest",   sum:"en / sanga", cls:"r-priest", governs:"trust",
+   power:"Controls the temple estate, its granary and its claim on land.", kind:"rival",
+   dup:{trust:-12}, dup3:{trust:-20},
+   why:"Two readings of the same signs is a schism, not a second opinion."},
+  {id:"war",    name:"War Chief",     sum:"šagina",     cls:"r-war",    governs:"people",
+   power:"The muster, the wall, and who is allowed through the gate.", kind:"rival",
+   dup:{trust:-10}, dup3:{trust:-18},
+   why:"Two men who both believe they command the muster."},
+  {id:"trader", name:"Master Trader", sum:"damgar",     cls:"r-trader", governs:"materials",
+   power:"Routes and prices for the stone, metal and timber the south has none of.", kind:"scale",
+   dup:{knowledge:6}, dup3:{trust:-10},
+   why:"Two traders cover two roads. Three compete for the same partners."},
+  {id:"farmer", name:"Master Farmer", sum:"engar",      cls:"r-farmer", governs:"food",
+   power:"Barley, the canal head, and the flood calendar.", kind:"scale",
+   dup:{food:8}, dup3:{food:12},
+   why:"More hands on the same land, with diminishing returns."},
+  {id:"crafter",name:"Master Crafter",sum:"ummia",      cls:"r-crafter",governs:"materials",
+   power:"Brick, bronze, pottery and reed — everything the city is physically made of.", kind:"scale",
+   dup:{materials:8}, dup3:{materials:12},
+   why:"Two workshops make more than one."}
+];
+const ROLE = Object.fromEntries(ROLES.map(r=>[r.id,r]));
+
+/* Cross-role synergies: hold at least one of each pair. */
+const SYNERGY = [
+  {pair:["farmer","crafter"], name:"Canal works",       eff:{food:5},      why:"Tools made for digging."},
+  {pair:["trader","crafter"], name:"Finished goods",    eff:{materials:5}, why:"Worked goods trade better than raw."},
+  {pair:["priest","farmer"],  name:"Planting calendar", eff:{food:5},      why:"Ritual timing is agricultural timing."},
+  {pair:["chief","war"],      name:"Ordered muster",    eff:{trust:5},     why:"One chain of command."},
+  {pair:["priest","trader"],  name:"Temple network",    eff:{knowledge:5}, why:"Temples were economic institutions."},
+  {pair:["chief","priest"],   name:"Legitimate rule",   eff:{trust:5},     why:"Authority that claims a god behind it."}
+];
+// People are never granted outright — they come from surplus food, or they walk in.
+const COUNCIL = {food:10, materials:10, knowledge:10, trust:10};
+const CAPS = {trust:100};   // Trust is a standing, not a stockpile
+
+/* ===================== SCENARIOS ===================== */
+const ROUNDS = [
+  {
+    n:1, title:"Where the First Houses Go",
+    anchor:"Ubaid settlement on the river levees, c. 5500 BCE — and rivers that do not stay put",
+    key:["farmer","crafter","chief"],
+    deck:[{n:4,t:"River Valley Geography"},{n:5,t:"The Fertile Crescent"},
+          {n:7,t:"Centralized Settlements"},{n:10,t:"Genesis 11:2 — “settled there”"}],
+    body:[
+      "You have walked a long way south. The land here is flat to the horizon, the soil is deep and soft, and there is no stone in it anywhere. Two channels of the river run through the plain and the ground between them is green.",
+      "Somebody has to say where the houses go, and once they go up in mud brick they are <strong>not moving again</strong>. The old people remember a settlement upriver that was abandoned in their grandparents' time. Nobody attacked it. The river simply went somewhere else."
+    ],
+    choices:[
+      {k:"A", tag:"growth", t:"Right on the bank. Water at the door, the richest soil there is.",
+       eff:{food:15, people:-5, trust:-5},
+       out:"The soil is everything you hoped. So is the water, twice, in the first ten years. Everything the river gives it takes back, and it does not warn you first."},
+      {k:"B", tag:"land", t:"On the natural levee — the raised bank the river built for itself — a little back from the water.",
+       eff:{food:20, knowledge:15, trust:10},
+       out:"Exactly where Ubaid villages sat, and why Eridu lasted while others did not. High enough to shed a flood, close enough to dig a short canal. The single best decision available in southern Mesopotamia."},
+      {k:"C", tag:"land", t:"Well back on the high ground, safe from any flood.",
+       eff:{food:5, people:5, materials:-10, knowledge:5},
+       out:"Dry and safe. Every drop of water for the fields now has to be carried or cut a long way, and you will spend generations paying for that."}
+    ]
+  },
+  {
+    n:2, title:"A Land Made of Mud",
+    anchor:"The alluvium has no stone, no ore and no timber — the origin of long-distance trade",
+    key:["trader","crafter","chief"],
+    deck:[{n:5,t:"Natural Trade Routes"},{n:8,t:"Efficient Transportation"},{n:34,t:"Key Characteristics — Trade"}],
+    body:[
+      "Take an inventory of what this place actually gives you: <strong>mud, reeds, water, fish, and date palms</strong>. That is the entire list.",
+      "There is no stone to grind grain with. No ore to make a blade. No tree tall enough to roof a room wider than a man can lie down. What you do have is a surplus of barley, and wool, and women who weave better cloth than anyone upriver."
+    ],
+    choices:[
+      {k:"A", tag:"trade", t:"Send your own people upriver with cloth and grain to find where the stone comes from.",
+       eff:{materials:25, knowledge:20, food:-10},
+       out:"The correct and expensive answer. The south imported obsidian from Anatolia, copper from Oman, timber from the Zagros, carnelian from the Indus. Knowing the road yourself is the difference between trading and being traded with."},
+      {k:"B", tag:"trade", t:"Wait for traders to come to you and pay whatever they ask.",
+       eff:{materials:15, food:-15, trust:-5},
+       out:"You get your grindstones. You have also told every trader on the river exactly how badly you need them."},
+      {k:"C", tag:"land", t:"Build everything out of reed and mud. Do without the rest.",
+       eff:{materials:5, trust:5, knowledge:-10},
+       out:"Genuinely possible — reed houses are still built in these marshes today, and they are beautiful. You will not get a plough, a chisel, or a roof beam, and so you will stay a village."}
+    ]
+  },
+  {
+    n:3, title:"The Canal Fills With Silt",
+    anchor:"Corvée labour and the uncomfortable origins of hierarchy",
+    key:["farmer","chief","priest"],
+    deck:[{n:9,t:"Environmental Challenges — irrigation &amp; drainage"},
+          {n:16,t:"Political Structure &amp; Social Hierarchy"},{n:20,t:"Key Characteristics — Agriculture"}],
+    body:[
+      "The canal works. That is the problem. Every flood leaves silt in it, and after three years it is half full and the water no longer reaches the far fields.",
+      "Clearing it takes <strong>every able body for several weeks</strong>, at exactly the time each family would rather be working its own plot. Four families have already said they are not coming. They are not wrong that it costs them more than it gives them."
+    ],
+    choices:[
+      {k:"A", tag:"growth", t:"Labour on the canal is owed by everyone. Those who refuse lose their share of the water.",
+       eff:{food:20, trust:-15, knowledge:5},
+       out:"This is corvée, and it is how it actually worked for the next three thousand years. It also means somebody now has the power to take your water away, which is a thing that did not exist here last year."},
+      {k:"B", tag:"cult", t:"The shrine feeds anyone who digs. Work for rations.",
+       eff:{food:15, trust:15, knowledge:10},
+       out:"The ration system — measured barley and oil, issued daily — is one of the best-documented institutions in Mesopotamia. It solves the problem and quietly makes the shrine the largest employer on the plain."},
+      {k:"C", tag:"land", t:"Each family clears the stretch that waters its own fields.",
+       eff:{food:-20, trust:-10, people:-3},
+       out:"Fair, obvious, and it fails. The families at the far end get nothing and leave, and a canal cleared in pieces is not cleared at all. The work is collective and the benefit is not."}
+    ]
+  },
+  {
+    n:4, title:"The Fields Turn White",
+    anchor:"Salinization — a slow failure that took centuries to bite, and never stopped",
+    key:["farmer","priest","crafter"],
+    deck:[{n:9,t:"Environmental Challenges — salinization &amp; crop selection"},{n:57,t:"Salt in the soil"}],
+    body:[
+      "The fields nearest the canal have gone pale. There is a crust on the soil that glitters when the sun is low, and it tastes of <strong>salt</strong>.",
+      "Nobody alive remembers it being like this, and nobody can say when it started. It has been getting slowly worse for longer than anyone has been keeping track. You are the first people in the world to have this problem, and it will outlast every one of you."
+    ],
+    choices:[
+      {k:"A", tag:"land", t:"Rest half the land every year and let the weeds pull the water table down.",
+       eff:{food:10, knowledge:20, trust:5},
+       out:"Correct, and expensive — you farm half as much land. Long fallow with deep-rooted weeds is the one thing that genuinely works, and Sumerian farmers figured it out."},
+      {k:"B", tag:"land", t:"Stop growing wheat. Plant barley, which will tolerate the salt.",
+       eff:{food:20, knowledge:15, trust:-5},
+       out:"Also correct. Barley displaced wheat across the third millennium, and the Girsu archives record the changeover as the fields got worse. It works, and everyone eats worse bread forever."},
+      {k:"C", tag:"growth", t:"Abandon the white fields and break new ground further out.",
+       eff:{food:10, materials:-15, knowledge:-5},
+       out:"Buys a generation, then the new fields go the same way — and now you have twice the canal to keep clear. Salt is the slow disaster underneath the whole of Mesopotamian history."}
+    ]
+  },
+  {
+    n:5, title:"Who Keeps the Grain",
+    anchor:"The granary, the temple estate, and the accident that produced writing",
+    key:["priest","trader","chief"],
+    deck:[{n:16,t:"The Ubaid Temple and the First Rulers"},{n:22,t:"The Record Keeping Problem"},
+          {n:24,t:"What Writing Was Actually For"}],
+    body:[
+      "For the first time there is <strong>more grain than the people who grew it will eat this year</strong>. That has never happened before and nobody is quite sure what it means.",
+      "It has to go somewhere dry. Somebody has to guard it. And when the lean month comes and families start drawing on it, somebody has to remember who put in what — because people do not agree about this from memory."
+    ],
+    choices:[
+      {k:"A", tag:"land", t:"Every household keeps its own. What you grew is yours.",
+       eff:{trust:-10, knowledge:-5, food:5},
+       out:"Nobody can cheat you and nobody can help you. A bad year takes out whichever families had the bad year, and there is no city here — just neighbours."},
+      {k:"B", tag:"growth", t:"One common granary, held by the elders, with everyone watching.",
+       eff:{food:10, trust:10},
+       out:"Workable while everyone knows everyone. It does not survive the settlement getting larger than the number of people you can keep track of."},
+      {k:"C", tag:"cult", t:"Store it at the shrine, and press marks into clay to record who gave and who drew.",
+       eff:{food:15, knowledge:30, trust:10},
+       out:"This is the actual origin of writing. Clay tokens, sealed in clay envelopes, then impressed on the outside, then simply drawn on a tablet. Nobody invented writing to tell a story. They invented it to keep track of barley."}
+    ]
+  },
+  {
+    n:6, title:"The Potter Who Stops Farming",
+    anchor:"Craft specialization — the thing that actually makes it a city",
+    key:["chief","crafter","priest"],
+    deck:[{n:19,t:"Surplus &amp; Specialization"},{n:20,t:"What counts as a civilization"},
+          {n:29,t:"Specialization and Social Class"}],
+    body:[
+      "Two things arrive in the same week. Your best potter asks to be released from the fields — she says that if she did nothing but throw pots she could make enough for the whole settlement and trade the rest upriver. And a group of herding families at the edge of your land asks to stay.",
+      "They are the same question, and the question is this: <strong>can you afford to feed someone who does not grow food?</strong>"
+    ],
+    choices:[
+      {k:"A", tag:"growth", t:"Feed the potter from the granary, and take the herders in.",
+       eff:{people:10, materials:20, knowledge:15, food:-10},
+       out:"Craft specialists fed by an agricultural surplus is close to the textbook definition of a city. Uruk became the largest settlement on earth by absorbing its neighbours — and the pottery of this period is mass-produced, plain, and made by people who did nothing else."},
+      {k:"B", tag:"trade", t:"Feed the potter. Send the herders on.",
+       eff:{materials:15, knowledge:10, food:-5},
+       out:"You get the specialist and stay small. The herders take their animals and their wool to whoever said yes."},
+      {k:"C", tag:"land", t:"Everyone farms. Nobody is carried.",
+       eff:{food:10, materials:-10, knowledge:-15, trust:-5},
+       out:"Defensible, and it ends here. A settlement where everyone grows their own food is a village by definition, and it stays one."}
+    ]
+  }
+];
+
+const EXPERTISE = {used:{knowledge:5, trust:5}, ignored:{trust:-5}, absentAmount:-10};
+const CONSENSUS = {unanimous:{trust:10}, majority:{trust:5}, deadlock:{trust:-15}};
+
+/* The five things historians count as a civilization — Unit 2, slide 20.
+   A settlement that lights all five has stopped being a village. */
+const CITY = [
+  {id:"advanced",  name:"Advanced city",       test:r=>r.people>=100,                 need:"People 100"},
+  {id:"workers",   name:"Specialized workers", test:r=>r.materials>=120,              need:"Materials 120"},
+  {id:"institut",  name:"Complex institutions",test:r=>r.trust>=60,                   need:"Trust 60"},
+  {id:"records",   name:"Record keeping",      test:r=>r.knowledge>=150,              need:"Knowledge 150"},
+  {id:"tech",      name:"Improved technology", test:r=>r.food>=100&&r.materials>=100, need:"Food 100 + Materials 100"}
+];
+function cityProgress(g){
+  const {res}=resourcesAt(g);
+  const met=CITY.filter(c=>c.test(res));
+  return {met:met.map(c=>c.id), count:met.length, res, isCity:met.length===CITY.length};
+}
+
+const FATES = {
+  uruk:{cls:"f-hub",label:"You built Uruk",
+    text:"You traded outward and you fed people who did not farm, and the settlement grew until it swallowed the villages around it. By 3100 BCE this is the largest settlement on earth — perhaps forty thousand people, a wall nine kilometres round, and a temple precinct visible from a day's walk away. Your accountants' clay tablets are the oldest writing anyone has found."},
+  eridu:{cls:"f-intact",label:"You built Eridu",
+    text:"You built on the levee and you put the grain in the shrine, and the shrine never moved again. Eridu's sanctuary was rebuilt on the same spot eighteen times across four thousand years. You never became the largest or the richest. You became the oldest, and when the Sumerians wrote their king list they began it here: <em>after kingship descended from heaven, kingship was in Eridu</em>."},
+  ur:{cls:"f-hub",label:"You built Ur",
+    text:"You found the road out and you kept finding it. Your settlement sits where the river meets the gulf, and ships come up it carrying copper from Oman and carnelian from the Indus. The wealth in your ground will astonish a British archaeologist named Woolley in 1922, when he opens the graves and finds gold, lapis, a board game, and rather more human remains than he expected."},
+  girsu:{cls:"f-intact",label:"You built Girsu, in the land of Lagash",
+    text:"You solved the canal and you solved the salt, and you wrote all of it down. Your archive — tens of thousands of tablets recording field sizes, barley yields, ration lists, and the wages of the women who wove your cloth — is the reason anyone today knows how a Sumerian city actually fed itself."},
+  tell:{cls:"f-emptied",label:"Nobody built anything here",
+    text:"The decisions were survivable one at a time and they did not add up. Some of your people drifted to settlements that had made better ones; the rest were still here when the channel shifted east and the water stopped coming. Your mound is catalogued in 1934, assigned a number, trenched for two seasons, and published in an appendix. It has no name because none was ever recorded."}
+};
+
+/* ===================== STATE ===================== */
+function seedState(){
+  const g=(id,name)=>({id,name,school:"settlement",members:[],rounds:{}});
+  return {
+    v:3, round:1, revealed:{}, classSize:27, freeDefect:false,
+    groups:[g("g1","The Reed Beds"),  g("g2","The High Mound"), g("g3","The River Bend"),
+            g("g4","The Two Channels"),g("g5","The Long Levee"), g("g6","The Salt Flat"),
+            g("g7","The Date Grove"),  g("g8","The Old Course"),  g("g9","The Fish Weir"),
+            g("g10","The Black Silt")],
+    events:[]   // {type:'trade'|'ally'|'break'|'defect', round, ...}
+  };
+}
+let uidSeq=0;
+const newId=()=>"s"+Date.now().toString(36)+(++uidSeq)+Math.random().toString(36).slice(2,5);
+let state=seedState(), tab="play", db=null;
+const DOC="game/session4", LS="beforeTheNames.v4";
+
+function setSaveState(t){const el=document.getElementById("saveState"); if(el) el.textContent=t;}
+async function boot(){
+  try{const raw=localStorage.getItem(LS); if(raw){const p=JSON.parse(raw); if(p&&p.groups) state=p;}}catch(e){}
+  render();
+  try{ db = await window.claude?.use?.("db") ?? null; }catch(e){ db=null; }
+  if(db){
+    try{
+      const snap=await db.doc(DOC).get(); const d=snap&&(snap.data??snap);
+      if(d&&Array.isArray(d.groups)){ state=d; render(); }
+      setSaveState("saved to class record");
+      watchVotes();
+    }catch(e){ setSaveState("local only"); }
+  } else setSaveState("local only");
+}
+/* Votes live in their own collection. Students write only their own row, so a
+   group submitting a choice can never overwrite the teacher's game state. */
+let votes = {};          // key `${round}_${groupId}` -> {round, groupId, choice, at}
+let voteUnsub = null;
+const voteKey = (rn,gid) => rn+"_"+gid;
+
+async function watchVotes(){
+  if(!db || voteUnsub) return;
+  try{
+    voteUnsub = db.collection("votes").onSnapshot(snap=>{
+      const next={};
+      const rows = snap && (snap.docs || snap.data || snap);
+      (Array.isArray(rows)?rows:[]).forEach(d=>{
+        const v = d.data ? d.data() : d;
+        if(v && v.round && v.groupId) next[voteKey(v.round,v.groupId)] = v;
+      });
+      votes = next;
+      applyVotes();
+      render();
+    });
+  }catch(e){ /* no live votes; teacher entry still works */ }
+}
+/* A submitted vote becomes that settlement's choice unless the teacher already set one. */
+function applyVotes(){
+  let touched=false;
+  Object.values(votes).forEach(v=>{
+    const g=state.groups.find(x=>x.id===v.groupId); if(!g) return;
+    const rd=g.rounds[v.round]=g.rounds[v.round]||{used:[]};
+    if(rd.choice!==v.choice && !rd.teacherSet){ rd.choice=v.choice; rd.votedBy="group"; touched=true; }
+  });
+  if(touched) save();
+}
+async function submitVote(gid, choice){
+  const rn=state.round;
+  const row={round:rn, groupId:gid, choice, at:Date.now()};
+  votes[voteKey(rn,gid)]=row;
+  applyVotes();
+  if(db){ try{ await db.doc("votes/"+voteKey(rn,gid)).set(row); }catch(e){
+    alert("Could not send that to the class board. Tell your teacher you chose "+choice+"."); } }
+  save(); render();
+}
+
+let saveTimer=null;
+function save(){
+  try{localStorage.setItem(LS,JSON.stringify(state));}catch(e){}
+  if(!db) return;
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(async()=>{
+    try{ await db.doc(DOC).set(JSON.parse(JSON.stringify(state))); setSaveState("saved to class record"); }
+    catch(e){ setSaveState("local only"); }
+  },450);
+}
+
+/* ===================== COMPOSITION ===================== */
+const zero=()=>({food:0,people:0,materials:0,knowledge:0,trust:0});
+function add(t,s,mult){ if(!s) return t; for(const k in s) t[k]=(t[k]||0)+s[k]*(mult||1); return t; }
+function rolesHeld(g){const c={}; g.members.forEach(m=>{c[m.role]=(c[m.role]||0)+1;}); return c;}
+function missingRoles(g){const c=rolesHeld(g); return ROLES.filter(r=>!c[r.id]).map(r=>r.id);}
+function duplicateRoles(g){const c=rolesHeld(g); return Object.keys(c).filter(r=>c[r]>=2);}
+function hasFullCouncil(g){
+  const c=rolesHeld(g);
+  return ROLES.every(r=>c[r.id]===1) && g.members.length===ROLES.length;
+}
+/* Everything the roster itself pays or costs, every round. */
+function composition(g){
+  const c=rolesHeld(g), lines=[], eff=zero();
+  ROLES.forEach(r=>{
+    const n=c[r.id]||0; if(n<2) return;
+    const e = n>=3 ? (r.dup3||r.dup) : r.dup;
+    const bad = Object.values(e).some(v=>v<0);
+    add(eff,e);
+    lines.push({kind:bad?"bad":"good",
+      what:(n>=3?"Three ":"Two ")+r.name+(n>=3?"s":"s")+" — "+r.why, eff:e});
+  });
+  SYNERGY.forEach(s=>{
+    if(s.pair.every(p=>c[p])){
+      add(eff,s.eff);
+      lines.push({kind:"good", what:s.name+" ("+s.pair.map(p=>ROLE[p].name).join(" + ")+") — "+s.why, eff:s.eff});
+    }
+  });
+  let council=false;
+  if(hasFullCouncil(g)){ council=true; add(eff,COUNCIL);
+    lines.push({kind:"council", what:"Full council — every role once, none twice", eff:COUNCIL}); }
+  return {eff, lines, council};
+}
+function fmtEff(e){
+  return Object.keys(e).filter(k=>e[k]).map(k=>{
+    const v=e[k]; return (v>0?"+":"")+v+" "+ROLE_RES(k);
+  }).join(" · ");
+}
+const ROLE_RES = k => ({food:"Food",people:"People",materials:"Materials",knowledge:"Knowledge",trust:"Trust"}[k]||k);
+
+/* ===================== SCORING ===================== */
+function roundEffect(g, rn){
+  const rd=g.rounds[rn], round=ROUNDS[rn-1], held=rolesHeld(g);
+  const eff=zero(), parts=[];
+  if(!rd || !rd.choice) return {eff, parts, played:false};
+
+  const ch=round.choices.find(c=>c.k===rd.choice);
+  if(ch){ add(eff,ch.eff); parts.push({t:"Choice "+ch.k, e:ch.eff}); }
+
+  round.key.forEach(rid=>{
+    const r=ROLE[rid];
+    if(!held[rid]){
+      const e={}; e[r.governs]=EXPERTISE.absentAmount;
+      add(eff,e); parts.push({t:r.name+" absent", e});
+    } else if((rd.used||[]).includes(rid)){
+      add(eff,EXPERTISE.used); parts.push({t:r.name+" used", e:EXPERTISE.used});
+    } else {
+      add(eff,EXPERTISE.ignored); parts.push({t:r.name+" ignored", e:EXPERTISE.ignored});
+    }
+  });
+
+  if(rd.consensus){
+    const e=CONSENSUS[rd.consensus];
+    add(eff,e);
+    parts.push({t:{unanimous:"Unanimous",majority:"Majority",deadlock:"No consensus"}[rd.consensus], e});
+  }
+
+  const comp=composition(g);
+  if(Object.values(comp.eff).some(v=>v)){ add(eff,comp.eff); parts.push({t:"Roster", e:comp.eff}); }
+
+  state.events.filter(ev=>ev.round===rn).forEach(ev=>{
+    if(ev.type==="trade"){
+      if(ev.a===g.id){ const e={}; e[ev.giveRes]=-ev.giveAmt; e[ev.getRes]=(e[ev.getRes]||0)+ev.getAmt;
+        add(eff,e); parts.push({t:"Trade with "+nameOf(ev.b), e}); }
+      if(ev.b===g.id){ const e={}; e[ev.getRes]=-ev.getAmt; e[ev.giveRes]=(e[ev.giveRes]||0)+ev.giveAmt;
+        add(eff,e); parts.push({t:"Trade with "+nameOf(ev.a), e}); }
+    }
+    if(ev.type==="ally" && (ev.a===g.id||ev.b===g.id)){
+      const e={trust:10}; add(eff,e);
+      parts.push({t:"Alliance with "+nameOf(ev.a===g.id?ev.b:ev.a), e});
+    }
+    if(ev.type==="break" && ev.by===g.id){
+      const e={trust:-25}; add(eff,e); parts.push({t:"Broke alliance", e});
+    }
+    if(ev.type==="defect"){
+      if(ev.from===g.id){ const e={}; e[ROLE[ev.role].governs]=ev.fromAmt;
+        add(eff,e); parts.push({t:ev.name+" left", e}); }
+      if(ev.to===g.id){ const e={}; e[ROLE[ev.role].governs]=ev.toAmt;
+        add(eff,e); parts.push({t:ev.name+" joined", e}); }
+    }
+  });
+  return {eff, parts, played:true};
+}
+function resourcesAt(g, upTo){
+  const r={...START};
+  const growth=[];
+  for(let i=1;i<=(upTo??ROUNDS.length);i++){
+    const {eff,played}=roundEffect(g,i);
+    if(!played) continue;
+    for(const k in eff) r[k]=(r[k]||0)+eff[k];
+    if(r.food>FOOD_CAP){
+      const surplus=r.food-FOOD_CAP;
+      const born=Math.floor(surplus/FOOD_PER_PERSON);
+      if(born>0){ r.people+=born; r.food-=born*FOOD_PER_PERSON; growth.push({round:i,born}); }
+    }
+    for(const k in r){ if(r[k]<0) r[k]=0; if(CAPS[k]!=null && r[k]>CAPS[k]) r[k]=CAPS[k]; }
+  }
+  return {res:r, growth};
+}
+function finalScore(g){
+  const {res}=resourcesAt(g);
+  return res.food+res.materials+res.knowledge+res.trust+res.people*PEOPLE_WEIGHT;
+}
+function alliesOf(gid){
+  const live=new Set();
+  state.events.forEach(ev=>{
+    if(ev.type==="ally"){ if(ev.a===gid) live.add(ev.b); if(ev.b===gid) live.add(ev.a); }
+    if(ev.type==="break"){ if(ev.by===gid) live.delete(ev.with); if(ev.with===gid) live.delete(ev.by); }
+  });
+  return [...live];
+}
+const nameOf = id => (state.groups.find(g=>g.id===id)||{}).name || "?";
+
+/* fracture: a rivalrous duplicate that cannot agree */
+function fractureRisk(g, rn){
+  const rd=g.rounds[rn]; if(!rd || rd.consensus!=="deadlock") return [];
+  const c=rolesHeld(g);
+  return ROLES.filter(r=>r.kind==="rival" && (c[r.id]||0)>=2).map(r=>r.id);
+}
+function overruledIn(g, rn){
+  const rd=g.rounds[rn]; if(!rd||!rd.choice) return [];
+  const held=rolesHeld(g);
+  return ROUNDS[rn-1].key.filter(rid=>held[rid] && !(rd.used||[]).includes(rid));
+}
+function earnedDefection(g,m){
+  if(m.defected) return null;
+  for(let i=1;i<=ROUNDS.length;i++){
+    if(overruledIn(g,i).includes(m.role)) return i;
+    if(fractureRisk(g,i).includes(m.role)) return i;
+  }
+  return null;
+}
+
+function profileOf(g){
+  let used={}, tags={growth:0,trade:0,land:0,cult:0}, rounds=0;
+  for(let i=1;i<=ROUNDS.length;i++){
+    const rd=g.rounds[i]; if(!rd||!rd.choice) continue;
+    rounds++;
+    const ch=ROUNDS[i-1].choices.find(c=>c.k===rd.choice);
+    if(ch&&ch.tag) tags[ch.tag]++;
+    (rd.used||[]).forEach(r=>{used[r]=(used[r]||0)+1;});
+  }
+  return {used,tags,rounds};
+}
+const TAG_MAX=(()=>{const m={growth:0,trade:0,land:0,cult:0};
+  ROUNDS.forEach(r=>{const s={}; r.choices.forEach(c=>{if(c.tag)s[c.tag]=1;});
+    Object.keys(s).forEach(t=>m[t]++);}); return m;})();
+function trajectory(g){
+  const p=profileOf(g);
+  if(!p.rounds) return null;
+  const t=p.tags, N=k=>TAG_MAX[k]?t[k]/TAG_MAX[k]:0;
+  const growth=N("growth"),trade=N("trade"),land=N("land"),cult=N("cult");
+  const r=k=>(p.used[k]||0)/ROUNDS.length*0.3;
+  const ranked=[{f:FATES.uruk, v:growth*1.4+trade*1.0+r("crafter")},
+                {f:FATES.ur,   v:trade*1.8+growth*0.4+r("trader")},
+                {f:FATES.eridu,v:cult*1.7+land*0.5+r("priest")},
+                {f:FATES.girsu,v:land*1.5+cult*0.4+r("farmer")}].sort((a,b)=>b.v-a.v);
+  return ranked[0].v>0 ? ranked[0].f : null;
+}
+function fateOf(g){
+  const p=profileOf(g); if(p.rounds<ROUNDS.length) return null;
+  // A settlement that gains nothing at all scores 480; below that it went backwards.
+  if(finalScore(g)<500) return FATES.tell;
+  const t=p.tags, N=k=>TAG_MAX[k]?t[k]/TAG_MAX[k]:0;
+  const growth=N("growth"),trade=N("trade"),land=N("land"),cult=N("cult");
+  const r=k=>(p.used[k]||0)/ROUNDS.length*0.3;
+  return [{f:FATES.uruk, v:growth*1.4+trade*1.0+r("crafter")},
+          {f:FATES.ur,   v:trade*1.8+growth*0.4+r("trader")},
+          {f:FATES.eridu,v:cult*1.7+land*0.5+r("priest")},
+          {f:FATES.girsu,v:land*1.5+cult*0.4+r("farmer")}]
+    .sort((a,b)=>b.v-a.v)[0].f;
+}
+
+/* ===================== HELPERS ===================== */
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const dcls=v=>v>0?"pos":v<0?"neg":"zero";
+const dsign=v=>(v>0?"+":"")+v;
+function chip(rid){const r=ROLE[rid];
+  return `<span class="role-chip"><i class="role-dot ${r.cls}"></i>${r.name}</span>`;}
+function resBar(res){
+  return `<div class="resbar">${RES.map(r=>{
+    const v=res[r.id]??0;
+    const low = r.id!=="people" && v<20;
+    return `<span class="res ${low?"low":""}"><i class="${r.cls}"></i><span class="lbl">${r.name}</span><b>${v}</b></span>`;
+  }).join("")}</div>`;
+}
+function effChips(e){
+  return Object.keys(e).filter(k=>e[k]).map(k=>
+    `<span class="bd ${dcls(e[k])}">${ROLE_RES(k)} <b>${dsign(e[k])}</b></span>`).join("");
+}
+
+/* ===================== VIEWS ===================== */
+function viewPlay(){
+  const rn=state.round, round=ROUNDS[rn-1];
+  const revealed=!!state.revealed[rn];
+  const placed=state.groups.reduce((a,g)=>a+g.members.length,0);
+  const allIn=state.groups.every(g=>g.rounds[rn]&&g.rounds[rn].choice);
+  let h=`<div class="stack">`;
+
+  if(placed===0){
+    h+=`<div class="panel" style="border-color:var(--lapis-dim);background:linear-gradient(var(--surface),var(--lapis-ghost))">
+      <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+        <div style="flex:1;min-width:250px">
+          <strong style="font-family:var(--f-display);font-size:17px">Read ahead as much as you like</strong>
+          <p class="hint" style="margin:4px 0 0">The scenario is below — page through all six rounds with the buttons under it. You only need students in settlements once you want to score a round.</p>
+        </div>
+        <button class="btn btn-primary" data-tab="setup">Found the settlements →</button>
+      </div></div>`;
+  }
+
+  h+=`<section class="scene">
+    <div class="scene-head">
+      <span class="scene-num">Round ${round.n} of 6</span>
+      <h2>${round.title}</h2>
+      <p class="scene-anchor">${esc(round.anchor)}</p>
+    </div>
+    <div class="scene-body">
+      ${round.body.map(p=>`<p>${p}</p>`).join("")}
+      <div class="keyskills"><span class="label">Expertise that decides this round</span>
+        ${round.key.map(k=>chip(k)).join("")}</div>
+      <div class="decklinks"><span class="label">Unit 2 deck</span>
+        ${round.deck.map(d=>`<span class="slideref"><b>Slide ${d.n}</b> ${d.t}</span>`).join("")}</div>
+      <div class="choices">
+        ${round.choices.map(c=>`<div class="choice">
+          <div class="choice-key"><span>${c.k}</span></div>
+          <h4>${esc(c.t)}</h4>
+          ${revealed?`<div class="breakdown" style="border-top:0;padding-top:4px">${effChips(c.eff)}</div>
+            <p class="outcome">${c.out}</p>`:""}
+        </div>`).join("")}
+      </div>
+      <div class="row" style="margin-top:16px">
+        <button class="btn ${revealed?"":"btn-primary"}" data-act="reveal">
+          ${revealed?"Hide what actually happened":"Reveal what actually happened"}</button>
+        <span class="hint">${placed===0?"":(allIn?"Every settlement has locked a choice."
+          :(()=>{const w=state.groups.filter(g=>!(g.rounds[rn]&&g.rounds[rn].choice)).length;
+             return "Waiting on "+w+(w===1?" settlement.":" settlements.");})())}</span>
+        <span class="spacer"></span>
+        <button class="btn btn-ghost btn-sm" data-act="prev" ${rn<=1?"disabled":""}>${rn<=1?"← Back":"← Round "+(rn-1)}</button>
+        <button class="btn btn-sm" data-act="next" ${rn>=6?"disabled":""}>${rn>=6?"Last round":"Round "+(rn+1)+" →"}</button>
+      </div>
+    </div></section>`;
+
+  if(placed===0){ h+=`</div>`; return h; }
+
+  h+=`<div class="sec-head"><h2>Record the round</h2>
+    <p>Tick an expertise only if that role's argument actually changed the decision.</p></div>`;
+
+  state.groups.forEach(g=>{
+    const rd=g.rounds[rn]||{}, held=rolesHeld(g);
+    const {parts}=roundEffect(g,rn);
+    const {res}=resourcesAt(g,rn);
+    const over=overruledIn(g,rn), frac=fractureRisk(g,rn);
+    const comp=composition(g);
+    h+=`<div class="grouprow ${rd.choice?"locked":""}">
+      <div class="gr-head">
+        <span class="gr-name">${esc(g.name)}</span>
+        ${comp.council?`<span class="pill" style="border-color:var(--gold);color:var(--gold);background:var(--gold-ghost)">Full council</span>`:""}
+        ${frac.length?`<span class="pill" style="border-color:var(--blood);color:var(--blood);background:var(--blood-ghost)">Fracturing — two ${frac.map(f=>ROLE[f].name).join(", ")} and no agreement</span>`:""}
+        ${over.length?`<span class="pill" style="border-color:var(--blood);color:var(--blood);background:var(--blood-ghost)">Overruled: ${over.map(d=>{
+            const who=g.members.filter(m=>m.role===d&&!m.defected).map(m=>m.name).join(", ");
+            return (who||ROLE[d].name);}).join(" · ")}</span>`:""}
+        <span class="spacer"></span>
+        ${resBar(res)}
+      </div>
+      <div class="gr-controls">
+        <div class="ctl"><span class="label">Choice</span>
+          <div class="seg">${round.choices.map(c=>`<button data-act="choice" data-g="${g.id}" data-k="${c.k}"
+            aria-pressed="${rd.choice===c.k}">${c.k}</button>`).join("")}</div></div>
+        <div class="ctl" style="flex:1;min-width:230px"><span class="label">Expertise brought to bear</span>
+          <div class="skillbox">${round.key.map(rid=>{
+            if(!held[rid]) return `<span class="skilltog absent" title="Nobody holds this role">${ROLE[rid].name} −10 ${ROLE_RES(ROLE[rid].governs)}</span>`;
+            const on=(rd.used||[]).includes(rid);
+            return `<button class="skilltog" data-act="skill" data-g="${g.id}" data-r="${rid}"
+              aria-pressed="${on}"><i class="role-dot ${ROLE[rid].cls}"></i>${ROLE[rid].name}</button>`;
+          }).join("")}</div></div>
+        <div class="ctl"><span class="label">How they decided</span>
+          <div class="seg ${rd.consensus==="deadlock"?"warn":""}">
+            <button data-act="cons" data-g="${g.id}" data-c="unanimous" aria-pressed="${rd.consensus==="unanimous"}">Unanimous</button>
+            <button data-act="cons" data-g="${g.id}" data-c="majority" aria-pressed="${rd.consensus==="majority"}">Majority</button>
+            <button data-act="cons" data-g="${g.id}" data-c="deadlock" aria-pressed="${rd.consensus==="deadlock"}">Deadlock</button>
+          </div></div>
+      </div>
+      ${parts.length?`<div class="breakdown">
+        ${parts.map(p=>`<span class="bd">${esc(p.t)} <b>${fmtEff(p.e)}</b></span>`).join("")}
+      </div>`:""}
+    </div>`;
+  });
+
+  h+=coopPanel()+defectionPanel()+`</div>`;
+  return h;
+}
+
+function coopPanel(){
+  const opts=state.groups.map(g=>`<option value="${g.id}">${esc(g.name)}</option>`).join("");
+  const resOpts=RES.filter(r=>r.id!=="people").map(r=>`<option value="${r.id}">${r.name}</option>`).join("");
+  const evs=state.events.filter(e=>e.type==="trade"||e.type==="ally"||e.type==="break");
+  return `<div class="coop">
+    <h3>Trade &amp; alliance</h3>
+    <p class="hint">Knowledge is the only resource you still have after you give it away — say that out loud once. An alliance needs both settlements at ${ALLY_FLOOR} Trust or more, and obliges each to cover the other at zero.</p>
+    <div class="coop-form">
+      <div class="ctl"><span class="label">Settlement</span><select id="trA">${opts}</select></div>
+      <div class="ctl"><span class="label">Gives</span>
+        <input type="text" id="trGiveAmt" value="10"><select id="trGiveRes">${resOpts}</select></div>
+      <div class="ctl"><span class="label">To</span><select id="trB">${opts}</select></div>
+      <div class="ctl"><span class="label">In return for</span>
+        <input type="text" id="trGetAmt" value="10"><select id="trGetRes">${resOpts}</select></div>
+      <button class="btn btn-sm" data-act="trade">Record trade</button>
+    </div>
+    <div class="coop-form" style="margin-top:4px">
+      <div class="ctl"><span class="label">Alliance between</span><select id="alA">${opts}</select></div>
+      <div class="ctl"><span class="label">and</span><select id="alB">${opts}</select></div>
+      <button class="btn btn-sm btn-good" data-act="ally">Form alliance</button>
+      <button class="btn btn-sm btn-danger" data-act="break">Break it</button>
+    </div>
+    ${evs.length?`<ul class="evlog">${evs.slice().reverse().map(ev=>{
+      if(ev.type==="trade") return `<li class="trade"><b>Round ${ev.round}</b> · ${esc(nameOf(ev.a))} gave ${ev.giveAmt} ${ROLE_RES(ev.giveRes)} to ${esc(nameOf(ev.b))} for ${ev.getAmt} ${ROLE_RES(ev.getRes)}<button class="undo" data-act="undo" data-i="${state.events.indexOf(ev)}">undo</button></li>`;
+      if(ev.type==="ally") return `<li class="ally"><b>Round ${ev.round}</b> · ${esc(nameOf(ev.a))} and ${esc(nameOf(ev.b))} are allied<button class="undo" data-act="undo" data-i="${state.events.indexOf(ev)}">undo</button></li>`;
+      return `<li class="defect"><b>Round ${ev.round}</b> · ${esc(nameOf(ev.by))} broke its alliance with ${esc(nameOf(ev.with))}<button class="undo" data-act="undo" data-i="${state.events.indexOf(ev)}">undo</button></li>`;
+    }).join("")}</ul>`:`<p class="hint" style="margin-top:12px">No trades or alliances yet.</p>`}
+  </div>`;
+}
+
+function defectionPanel(){
+  const free=!!state.freeDefect, eligible=[];
+  state.groups.forEach(g=>g.members.forEach(m=>{
+    if(m.defected) return;
+    const earned=earnedDefection(g,m);
+    if(free||earned) eligible.push({g,m,earned});
+  }));
+  const defs=state.events.filter(e=>e.type==="defect");
+  return `<div class="defect-panel">
+    <h3>Defection &amp; fracture</h3>
+    <p class="hint">A student earns the right to cross in one of two ways: their role was one of the three deciding a round and the council overruled them anyway, or their settlement holds two of a rivalrous role and failed to agree. Either way the right is permanent and may be used once. The settlement they leave loses <strong>25</strong> of whatever that role governs if it was the only holder, <strong>10</strong> if another remains. The settlement that takes them gains <strong>15</strong>, or <strong>25</strong> if it completes a scaling pair.</p>
+    <div class="row" style="margin-top:11px">
+      <button class="btn btn-sm ${free?"btn-danger":"btn-ghost"}" data-act="freedefect" aria-pressed="${free}">
+        ${free?"Open defection: ON — anyone may cross":"Open defection: off — only the overruled may cross"}</button>
+    </div>
+    <div class="coop-form">
+      <div class="ctl"><span class="label">Who is leaving</span>
+        <select id="defWho"><option value="">${eligible.length?"Select a student…":"Nobody has earned the right yet"}</option>
+        ${eligible.map(({g,m,earned})=>`<option value="${m.id}">${esc(m.name)} — ${ROLE[m.role].name}, ${esc(g.name)}${earned?" · earned in round "+earned:""}</option>`).join("")}</select></div>
+      <div class="ctl"><span class="label">Where they are going</span>
+        <select id="defTo"><option value="">Select a settlement…</option>
+        ${state.groups.map(g=>`<option value="${g.id}">${esc(g.name)}</option>`).join("")}</select></div>
+      <button class="btn btn-danger" data-act="defect">Record defection</button>
+    </div>
+    ${defs.length?`<ul class="evlog">${defs.slice().reverse().map(d=>`<li class="defect">
+      <b>Round ${d.round}</b> · ${esc(d.name)} (${ROLE[d.role].name}) left <b>${esc(nameOf(d.from))}</b> for <b>${esc(nameOf(d.to))}</b>
+      ${d.moved?"— moved by the teacher, no penalty, switch used"
+        :"— "+ROLE_RES(ROLE[d.role].governs)+" "+d.fromAmt+" there, +"+d.toAmt+" here"}</li>`).join("")}</ul>`:""}
+  </div>`;
+}
+
+
+
+/* ===================== POLL (student device) ===================== */
+const MYKEY="beforeTheNames.myGroup";
+function myGroupId(){ try{ return localStorage.getItem(MYKEY)||""; }catch(e){ return ""; } }
+function setMyGroup(id){ try{ id?localStorage.setItem(MYKEY,id):localStorage.removeItem(MYKEY); }catch(e){} }
+
+function viewPoll(){
+  const mine=myGroupId(), g=state.groups.find(x=>x.id===mine);
+  const rn=state.round, round=ROUNDS[rn-1];
+
+  if(!g){
+    return `<div class="stack">
+      <div class="sec-head"><h2>Which settlement are you?</h2>
+        <p>Pick once. This device remembers you for the rest of the game.</p></div>
+      <div class="pollpick">
+        ${state.groups.map(x=>`<button class="pollgroup" data-act="pickgroup" data-g="${x.id}">
+          <strong>${esc(x.name)}</strong>
+          <span>${x.members.length} ${x.members.length===1?"person":"people"}</span></button>`).join("")}
+      </div>
+      <p class="hint">Teacher: this tab is for student devices. Open the Play tab instead.</p>
+    </div>`;
+  }
+
+  const rd=g.rounds[rn]||{};
+  const mineVote=votes[voteKey(rn,g.id)];
+  return `<div class="stack">
+    <div class="pollhead">
+      <div><span class="label">You are</span><h2>${esc(g.name)}</h2></div>
+      <button class="btn btn-ghost btn-sm" data-act="pickgroup" data-g="">Not us</button>
+    </div>
+    <div class="scene">
+      <div class="scene-head"><span class="scene-num">Round ${rn} of 6</span><h2>${round.title}</h2></div>
+      <div class="scene-body">
+        ${round.body.map(p=>`<p>${p}</p>`).join("")}
+        <div class="keyskills"><span class="label">This turns on</span>${round.key.map(k=>chip(k)).join("")}</div>
+      </div>
+    </div>
+    <div class="sec-head"><h2>Your council's decision</h2>
+      <p>Argue it out first. One submission per settlement — the last one sent is what counts.</p></div>
+    <div class="pollopts">
+      ${round.choices.map(c=>`<button class="pollopt ${rd.choice===c.k?"chosen":""}"
+        data-act="vote" data-k="${c.k}">
+        <span class="pk">${c.k}</span><span class="pt">${esc(c.t)}</span></button>`).join("")}
+    </div>
+    ${rd.choice?`<p class="note"><b>Sent: ${rd.choice}.</b> ${mineVote?"Your teacher's board has it.":"Recorded on this device."} You can change it until the round is revealed.</p>`
+      :`<p class="hint">Nothing sent yet.</p>`}
+  </div>`;
+}
+
+/* a compact tally of who chose what, for the board */
+function tallyFor(rn){
+  const round=ROUNDS[rn-1], t={};
+  round.choices.forEach(c=>t[c.k]=[]);
+  state.groups.forEach(g=>{
+    const rd=g.rounds[rn];
+    if(rd&&rd.choice&&t[rd.choice]) t[rd.choice].push(g);
+  });
+  return t;
+}
+
+function viewBoard(){
+  const ranked=state.groups.map(g=>({g,score:finalScore(g),cp:cityProgress(g)}))
+    .sort((a,b)=>b.score-a.score);
+  const rn=state.round;
+  const anyPlayed=state.groups.some(g=>Object.keys(g.rounds||{}).some(k=>g.rounds[k].choice));
+
+  let h=`<div class="board">
+    <div class="board-head">
+      <div><span class="board-eyebrow">Round ${rn} of 6</span>
+        <h2>${esc(ROUNDS[rn-1].title)}</h2></div>
+      <div class="board-goal">
+        <span class="label">The goal</span>
+        <strong>Become a city</strong>
+        <span class="hint">All five marks lit. Then you find out which one you built.</span>
+      </div>
+    </div>`;
+
+  if(!anyPlayed){
+    h+=`<p class="note" style="margin:0 0 14px">Nothing scored yet. Record round 1 on the Play tab and this board fills in.</p>`;
+  }
+
+  h+=`<div class="board-grid">`;
+  ranked.forEach((r,i)=>{
+    const g=r.g, cp=r.cp, traj=trajectory(g);
+    // last completed round, and whether it went well
+    let last=null;
+    for(let k=ROUNDS.length;k>=1;k--){ if(g.rounds[k]&&g.rounds[k].choice){ last=k; break; } }
+    let verdict="", vcls="";
+    if(last){
+      const {eff}=roundEffect(g,last);
+      const net=eff.food+eff.materials+eff.knowledge+eff.trust+eff.people*PEOPLE_WEIGHT;
+      const ch=ROUNDS[last-1].choices.find(c=>c.k===g.rounds[last].choice);
+      vcls = net>0?"good":net<0?"bad":"flat";
+      verdict = `Round ${last}: chose ${g.rounds[last].choice}` +
+        (g.rounds[last].consensus?", "+({unanimous:"unanimous",majority:"majority",deadlock:"no agreement"}[g.rounds[last].consensus]):"") +
+        ` — ${dsign(net)}`;
+    }
+    h+=`<div class="bcard ${cp.isCity?"is-city":""} ${i===0?"lead":""}">
+      <div class="bcard-top">
+        <span class="brank">${i+1}</span>
+        <div class="bname">
+          <strong>${esc(g.name)}</strong>
+          <span class="bsub">${g.members.length} ${g.members.length===1?"person":"people"}${
+            hasFullCouncil(g)?" · full council":""}${
+            duplicateRoles(g).filter(d=>ROLE[d].kind==="rival").length?" · divided authority":""}</span>
+        </div>
+        <span class="bscore">${r.score}</span>
+      </div>
+      ${resBar(cp.res)}
+      <div class="marks">
+        ${CITY.map(c=>{
+          const on=cp.met.includes(c.id);
+          return `<span class="mark ${on?"on":""}" title="${c.need}">
+            <i></i>${c.name}<em>${on?"":c.need}</em></span>`;
+        }).join("")}
+      </div>
+      ${cp.isCity
+        ? `<div class="bfate city">This is a city. ${traj?traj.label.replace("You built","On the way to being"):""}</div>`
+        : traj
+          ? `<div class="bfate">On track for <strong>${traj.label.replace("You built ","").replace("Nobody built anything here","no name at all")}</strong> — ${cp.count} of 5 marks</div>`
+          : `<div class="bfate quiet">Too early to say what this becomes</div>`}
+      ${verdict?`<div class="bverdict ${vcls}">${esc(verdict)}</div>`:""}
+    </div>`;
+  });
+  h+=`</div>`;
+
+  // who chose what, this round
+  const tal=tallyFor(rn), voted=state.groups.filter(g=>g.rounds[rn]&&g.rounds[rn].choice).length;
+  h+=`<div class="tally">
+    <div class="tally-head"><span class="label">Round ${rn} — who chose what</span>
+      <span class="hint">${voted} of ${state.groups.length} in${state.revealed[rn]?" · revealed":""}</span></div>
+    <div class="tally-cols">
+      ${ROUNDS[rn-1].choices.map(c=>{
+        const list=tal[c.k], best=state.revealed[rn] &&
+          Math.max(...ROUNDS[rn-1].choices.map(x=>x.eff.food+x.eff.materials+x.eff.knowledge+x.eff.trust+(x.eff.people||0)*PEOPLE_WEIGHT))
+          === (c.eff.food+c.eff.materials+c.eff.knowledge+c.eff.trust+(c.eff.people||0)*PEOPLE_WEIGHT);
+        return `<div class="tcol ${best?"best":""}">
+          <div class="tk">${c.k}<span>${list.length}</span></div>
+          <p class="tt">${esc(c.t)}</p>
+          <div class="tnames">${list.length?list.map(x=>`<span class="tname">${esc(x.name)}${
+            x.rounds[rn].votedBy?" ✓":""}</span>`).join(""):`<span class="tname empty">—</span>`}</div>
+          ${state.revealed[rn]?`<div class="teff">${fmtEff(c.eff)}</div>`:""}
+        </div>`;}).join("")}
+    </div>
+  </div>`;
+
+  const evs=state.events.filter(e=>e.round===rn);
+  if(evs.length){
+    h+=`<div class="board-events"><span class="label">This round</span>
+      ${evs.map(ev=>{
+        if(ev.type==="trade") return `<span class="bev trade">${esc(nameOf(ev.a))} → ${esc(nameOf(ev.b))} · ${ev.giveAmt} ${ROLE_RES(ev.giveRes)} for ${ev.getAmt} ${ROLE_RES(ev.getRes)}</span>`;
+        if(ev.type==="ally") return `<span class="bev ally">${esc(nameOf(ev.a))} + ${esc(nameOf(ev.b))} allied</span>`;
+        if(ev.type==="break") return `<span class="bev bad">${esc(nameOf(ev.by))} broke with ${esc(nameOf(ev.with))}</span>`;
+        return `<span class="bev bad">${esc(ev.name)} left ${esc(nameOf(ev.from))} for ${esc(nameOf(ev.to))}</span>`;
+      }).join("")}</div>`;
+  }
+  h+=`</div>`;
+  return h;
+}
+
+function viewScenarios(){
+  let h=`<div class="stack">
+    <div class="sec-head"><h2>All six rounds</h2>
+      <p>The whole arc in one place — read it through before class, or use it as the read-aloud script.</p></div>
+    <p class="note"><b>Outcomes are folded away.</b> Open one only after the settlements have voted; that is the reveal.</p>`;
+  ROUNDS.forEach(r=>{
+    h+=`<section class="scene">
+      <div class="scene-head"><span class="scene-num">Round ${r.n} of 6</span>
+        <h2>${r.title}</h2><p class="scene-anchor">${esc(r.anchor)}</p></div>
+      <div class="scene-body">
+        ${r.body.map(p=>`<p>${p}</p>`).join("")}
+        <div class="keyskills"><span class="label">Expertise that decides it</span>${r.key.map(k=>chip(k)).join("")}</div>
+        <div class="decklinks"><span class="label">Unit 2 deck</span>
+          ${r.deck.map(d=>`<span class="slideref"><b>Slide ${d.n}</b> ${d.t}</span>`).join("")}</div>
+        <div class="choices">${r.choices.map(c=>`<div class="choice">
+          <div class="choice-key"><span>${c.k}</span></div><h4>${esc(c.t)}</h4>
+          <details><summary style="cursor:pointer;font-size:12px;color:var(--ink3);font-weight:600">What actually happened</summary>
+            <div class="breakdown" style="border-top:0">${effChips(c.eff)}</div>
+            <p class="outcome" style="border-top:0;padding-top:7px">${c.out}</p></details>
+        </div>`).join("")}</div>
+        <div class="row" style="margin-top:16px">
+          <button class="btn btn-sm" data-act="goto" data-r="${r.n}">Open round ${r.n} on the Play tab →</button></div>
+      </div></section>`;
+  });
+  return h+`</div>`;
+}
+
+function viewStandings(){
+  const ranked=state.groups.map(g=>({g,score:finalScore(g),res:resourcesAt(g).res}))
+    .sort((a,b)=>b.score-a.score);
+  const complete=state.groups.every(g=>g.rounds[6]&&g.rounds[6].choice);
+  let h=`<div class="stack">
+    <div class="sec-head"><h2>Standings</h2>
+      <p>After round ${state.round} of 6. Score is every resource added together, with People counted ${PEOPLE_WEIGHT} times.</p></div>
+    <div class="standings">`;
+  ranked.forEach((r,i)=>{
+    const dups=duplicateRoles(r.g), miss=missingRoles(r.g);
+    h+=`<div class="stand ${i===0?"lead":""}">
+      <div class="stand-top"><span class="rank">${i+1}</span>
+        <div class="row" style="gap:8px">
+          <strong style="font-family:var(--f-display);font-size:17px">${esc(r.g.name)}</strong>
+          ${hasFullCouncil(r.g)?`<span class="role-chip" style="border-color:var(--gold);color:var(--gold)">full council</span>`:""}
+          ${dups.map(d=>`<span class="role-chip" style="border-color:${ROLE[d].kind==="rival"?"var(--blood)":"var(--green)"};color:${ROLE[d].kind==="rival"?"var(--blood)":"var(--green)"}">two ${ROLE[d].name}s</span>`).join("")}
+          ${miss.length?`<span class="role-chip" style="border-color:var(--blood-ghost);color:var(--blood)">no ${miss.map(d=>ROLE[d].name).join(", ")}</span>`:""}
+          ${alliesOf(r.g.id).map(a=>`<span class="role-chip" style="border-color:var(--green);color:var(--green)">allied with ${esc(nameOf(a))}</span>`).join("")}
+        </div>
+        <span class="stand-score delta ${dcls(r.score)}">${r.score}</span></div>
+      ${resBar(r.res)}
+    </div>`;
+  });
+  h+=`</div>`;
+
+  h+=`<div class="sec-head"><h2>Round by round</h2><p>Each settlement's net change per scenario.</p></div>
+  <div class="tblwrap"><table><thead><tr><th>Settlement</th>
+    ${ROUNDS.map(r=>`<th style="text-align:right">${r.n}. ${esc(r.title)}</th>`).join("")}
+    <th style="text-align:right">Score</th></tr></thead><tbody>`;
+  state.groups.forEach(g=>{
+    h+=`<tr><td><strong>${esc(g.name)}</strong></td>`;
+    ROUNDS.forEach(r=>{
+      const {eff,played}=roundEffect(g,r.n);
+      if(!played){ h+=`<td class="num" style="color:var(--ink3)">—</td>`; return; }
+      const net=eff.food+eff.materials+eff.knowledge+eff.trust+eff.people*PEOPLE_WEIGHT;
+      h+=`<td class="num"><span class="delta ${dcls(net)}">${dsign(net)}</span> <span style="color:var(--ink3)">${g.rounds[r.n].choice}</span></td>`;
+    });
+    h+=`<td class="num"><strong>${finalScore(g)}</strong></td></tr>`;
+  });
+  h+=`</tbody></table></div>`;
+
+  h+=`<div class="sec-head"><h2>What you built</h2>
+    <p>${complete?"Six rounds in. Every settlement has become something — and it has a name now."
+      :"Unlocks once every settlement has played round 6."}</p></div>`;
+  if(complete){
+    h+=`<p class="note"><b>Read aloud before revealing:</b> A thousand years have gone by. Nobody alive remembers choosing where to put the houses. The mud brick has been rebuilt so many times that the settlement now sits on a mound of its own rubble, high enough to see across the plain. Other people have started using a name for this place — you have never called it that yourselves, but it is what they call it, and it is the name that is going to last. <em>Then reveal each settlement in turn.</em></p>
+    <div class="stack" style="margin-top:13px">`;
+    state.groups.forEach(g=>{
+      const f=fateOf(g); if(!f) return;
+      h+=`<div class="epi"><div class="row"><h3>${esc(g.name)}</h3>
+        <span class="fate ${f.cls}">${f.label}</span><span class="spacer"></span>
+        <span class="stand-score delta ${dcls(finalScore(g))}">${finalScore(g)}</span></div>
+        <p>${f.text}</p></div>`;
+    });
+    h+=`</div>`;
+  }
+  h+=`<div class="row" style="margin-top:22px">
+    <button class="btn" data-act="export">Save the class record</button>
+    <span class="hint">Every settlement's roster, choices, resources and score — hand it to students for the writing task.</span>
+  </div></div>`;
+  return h;
+}
+
+function viewSetup(){
+  const n=state.groups.reduce((a,g)=>a+g.members.length,0), size=state.classSize||27, left=size-n;
+  let h=`<div class="stack">
+    <div class="sec-head"><h2>Found the settlements</h2>
+      <p>${n} of ${size} students placed${left>0?` — ${left} still to go`:left<0?` — ${-left} over`:" — everyone is in"}.</p></div>`;
+  h+=`<p class="note"><b>Composition is the game.</b> Two farmers work more land. Two chiefs are a standing argument. A settlement holding one of every role and no two of any earns a <b>full council</b> bonus every round — which means every duplicate you take costs you that. Show students this screen before they choose.</p>
+  <div class="row" style="margin-bottom:10px">
+    <button class="btn btn-primary btn-sm" data-act="addgroup">+ Add a settlement</button>
+    <span class="hint">No upper limit. Remove one with the × beside its name.</span>
+    <span class="spacer"></span>
+    <span class="label">Class size</span>
+    <input type="text" id="classSize" value="${size}" style="width:66px" data-act="size">
+  </div>
+  ${state.groups.length>6 && n>0 && n/state.groups.length < 4
+    ? `<p class="note warn"><b>${state.groups.length} settlements, ${n} students — about ${(n/state.groups.length).toFixed(1)} each.</b>
+       The roster system needs five or six per settlement to work: six roles, pairings between them, and a full council at exactly one of each.
+       Below four, most settlements will be missing three roles and taking automatic penalties every round.
+       If this is two class periods, play them as two games of five and reset between.</p>`
+    : ""}
+  <div class="setup-grid">`;
+
+  state.groups.forEach(g=>{
+    const held=rolesHeld(g), miss=missingRoles(g), comp=composition(g);
+    h+=`<div class="gcard">
+      <h3><i class="role-dot" style="background:var(--lapis)"></i>
+        <input type="text" value="${esc(g.name)}" data-act="rename" data-g="${g.id}" aria-label="Settlement name"
+          style="font-family:var(--f-display);font-size:17px;font-weight:700;background:none;border:0;border-bottom:1px dashed var(--line2);padding:2px 0;width:100%">
+        <button class="x" data-act="rmgroup" data-g="${g.id}" title="Remove this settlement" aria-label="Remove ${esc(g.name)}">×</button></h3>
+      <div class="gaps">
+        <span style="color:var(--ink3)">${g.members.length} student${g.members.length===1?"":"s"}</span>
+        ${g.members.length&&miss.length?`<span>· Missing: ${miss.map(r=>ROLE[r].name).join(", ")}</span>`:""}
+      </div>
+      <ul class="roster">${g.members.length?g.members.map(m=>{
+        const dup=held[m.role]>1, bad=dup&&ROLE[m.role].kind==="rival";
+        return `<li class="${dup?(bad?"dup-bad":"dup-good"):""}">
+          <i class="role-dot ${ROLE[m.role].cls}"></i><span class="nm">${esc(m.name)}</span>
+          ${m.defected?`<span class="role-chip" style="border-color:var(--blood-ghost);color:var(--blood);padding:1px 7px">defected</span>`:""}
+          <select data-act="setrole" data-g="${g.id}" data-m="${m.id}" aria-label="Role for ${esc(m.name)}"
+            style="margin-left:auto;font-size:11.5px;padding:3px 6px">
+            ${ROLES.map(r=>`<option value="${r.id}" ${m.role===r.id?"selected":""}>${r.name}</option>`).join("")}</select>
+          <button class="x" data-act="rm" data-g="${g.id}" data-m="${m.id}" aria-label="Remove ${esc(m.name)}">×</button></li>`;
+      }).join(""):`<li style="color:var(--ink3);background:none;border:1px dashed var(--line);justify-content:center">No students yet</li>`}</ul>
+      ${comp.lines.length?`<div class="comp">
+        <span class="label">Every round, this roster</span>
+        ${comp.lines.map(l=>`<div class="comp-line ${l.kind}">
+          <span class="what">${l.what}</span><span class="eff">${fmtEff(l.eff)}</span></div>`).join("")}
+      </div>`:(g.members.length?`<p class="hint" style="font-size:12px">No duplicates, no pairings yet.</p>`:"")}
+      <div class="addrow">
+        <input type="text" id="add-${g.id}" placeholder="Student name">
+        <select id="role-${g.id}">${ROLES.map(r=>`<option value="${r.id}">${r.name}</option>`).join("")}</select>
+        <button class="btn btn-sm" data-act="add" data-g="${g.id}">Add</button></div>
+      <details><summary style="cursor:pointer;font-size:12px;color:var(--ink3);font-weight:600">Add several at once</summary>
+        <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">
+          <textarea id="bulk-${g.id}" rows="4" placeholder="One name per line"
+            style="resize:vertical;font-size:13px"></textarea>
+          <button class="btn btn-sm" data-act="bulk" data-g="${g.id}">Add these students</button>
+          <span class="hint" style="font-size:11.5px">They all arrive as Chief — set each role above.</span>
+        </div></details>
+    </div>`;
+  });
+  h+=`</div>`;
+
+  h+=`<div class="sec-head"><h2>The six roles</h2><p>Three of them scale when doubled. Three of them do not.</p></div>
+  <div class="tblwrap"><table><thead><tr><th>Role</th><th>Sumerian</th><th>Governs</th>
+    <th>Doubled</th><th style="text-align:right">Held by</th></tr></thead><tbody>
+  ${ROLES.map(r=>{
+    const c=state.groups.reduce((a,g)=>a+g.members.filter(m=>m.role===r.id).length,0);
+    return `<tr><td><span class="role-chip"><i class="role-dot ${r.cls}"></i>${r.name}</span></td>
+      <td style="color:var(--ink3);font-style:italic">${r.sum}</td>
+      <td><span class="res"><i class="${RES.find(x=>x.id===r.governs).cls}"></i>${ROLE_RES(r.governs)}</span></td>
+      <td style="color:${r.kind==="rival"?"var(--blood)":"var(--green)"}">${fmtEff(r.dup)} — ${r.why}</td>
+      <td class="num">${c}</td></tr>`;}).join("")}
+  </tbody></table></div>
+
+  <div class="sec-head"><h2>Moving students</h2>
+    <p>Free while nothing is scored. Once play begins, a move is the student's one switch.</p></div>
+  <div class="coop">
+    <p class="hint">${playStarted()
+      ? "Play has begun. A student moved now has used their one switch: they are locked into the settlement they arrive at and can never leave it again."
+      : "Nothing is scored yet, so you can move anyone as often as you like. The one-switch rule starts biting the moment round 1 is recorded."}</p>
+    <div class="coop-form">
+      <div class="ctl"><span class="label">Move</span>
+        <select id="mvWho"><option value="">Select a student…</option>
+        ${state.groups.flatMap(g=>g.members.map(m=>
+          `<option value="${m.id}"${m.defected?" disabled":""}>${esc(m.name)} — ${ROLE[m.role].name}, ${esc(g.name)}${m.defected?" · already switched":""}</option>`
+        )).join("")}</select></div>
+      <div class="ctl"><span class="label">To</span>
+        <select id="mvTo"><option value="">Select a settlement…</option>
+        ${state.groups.map(g=>`<option value="${g.id}">${esc(g.name)}</option>`).join("")}</select></div>
+      <button class="btn btn-sm" data-act="move">Move student</button>
+    </div>
+  </div>
+
+  <div class="row" style="margin-top:24px">
+    <button class="btn btn-danger btn-sm" data-act="reset">Reset the whole game</button>
+    <span class="hint">Clears every student, choice, trade and alliance. Use it between class periods.</span>
+  </div></div>`;
+  return h;
+}
+
+function viewRules(){
+  return `<div class="stack">
+    <div class="sec-head"><h2>The five resources</h2><p>The same five the Neolithic scenarios use, so a settlement can carry over.</p></div>
+    <div class="tblwrap"><table><thead><tr><th>Resource</th><th>Starts at</th><th>What it is</th></tr></thead><tbody>
+    ${RES.map(r=>`<tr><td><span class="res"><i class="${r.cls}"></i><b>${r.name}</b></span></td>
+      <td class="num">${START[r.id]}</td><td style="color:var(--ink2)">${r.note}</td></tr>`).join("")}
+    </tbody></table></div>
+    <p class="note" style="margin-top:12px"><b>Food above ${FOOD_CAP} becomes people.</b> At the end of every round, each ${FOOD_PER_PERSON} surplus Food converts into <b>1 Person</b> and is spent. Hoarding grain does nothing; feeding people does. People count <b>${PEOPLE_WEIGHT}×</b> in the final score, because population was the thing every settlement was actually competing for.</p>
+
+    <div class="sec-head"><h2>What your roster is worth</h2><p>Composition pays out or costs every single round.</p></div>
+    <div class="rules-grid">
+      <div class="rule r-green"><h4>Doubling a working role</h4><ul>
+        <li>Two Master Farmers: <b>+8 Food</b> a round. Three: <b>+12</b> — the land is fixed, so returns diminish.</li>
+        <li>Two Master Crafters: <b>+8 Materials</b>. Three: <b>+12</b>.</li>
+        <li>Two Master Traders: <b>+6 Knowledge</b> — two roads covered.</li>
+      </ul></div>
+      <div class="rule r-blood"><h4>Doubling an authority role</h4><ul>
+        <li>Two Chiefs: <b class="neg">−15 Trust</b> a round. Two people with the final call means nobody has it.</li>
+        <li>Two High Priests: <b class="neg">−12 Trust</b>. Two readings of the same signs is a schism.</li>
+        <li>Two War Chiefs: <b class="neg">−10 Trust</b>. Both believe they command the muster.</li>
+        <li>There is no upside. Authority does not divide, and a settlement stuck with two of these is carrying a wound it cannot heal except by losing one.</li>
+      </ul></div>
+      <div class="rule"><h4>Three Master Traders</h4><ul>
+        <li>Turns rivalrous: <b class="neg">−10 Trust</b> a round instead of a bonus.</li>
+        <li>Two traders cover two roads. Three compete for the same partners.</li>
+      </ul></div>
+      <div class="rule r-gold"><h4>Full council</h4><ul>
+        <li>One of every role, and no two of any: <b>+10 Food, Materials, Knowledge and Trust</b>, every round.</li>
+        <li>Six students exactly. A seventh breaks it.</li>
+        <li>This is the real cost of doubling up — not the Trust penalty, the council you gave away.</li>
+      </ul></div>
+    </div>
+
+    <div class="sec-head"><h2>Pairings</h2><p>Hold at least one of each and the pairing pays every round.</p></div>
+    <div class="tblwrap"><table><thead><tr><th>Pairing</th><th>Roles</th><th>Every round</th><th>Why</th></tr></thead><tbody>
+    ${SYNERGY.map(s=>`<tr><td><strong>${s.name}</strong></td>
+      <td>${s.pair.map(p=>chip(p)).join(" ")}</td>
+      <td class="num" style="color:var(--green);font-weight:700">${fmtEff(s.eff)}</td>
+      <td style="color:var(--ink2)">${s.why}</td></tr>`).join("")}
+    </tbody></table></div>
+
+    <div class="sec-head"><h2>How points move in a round</h2></div>
+    <div class="rules-grid">
+      <div class="rule r-gold"><h4>Expertise</h4><ul>
+        <li>Each scenario names three roles whose knowledge bears on it.</li>
+        <li>That role's argument changed the decision: <b>+5 Knowledge, +5 Trust</b></li>
+        <li>Held the role but ignored it: <b class="neg">−5 Trust</b></li>
+        <li>Nobody holds the role: <b class="neg">−10</b> of whatever that role governs, unavoidable</li>
+      </ul></div>
+      <div class="rule"><h4>Reaching a decision</h4><ul>
+        <li>Unanimous: <b>+10 Trust</b></li>
+        <li>Majority with the dissent recorded: <b>+5 Trust</b></li>
+        <li>Deadlock: <b class="neg">−15 Trust</b>, and a rivalrous duplicate fractures</li>
+      </ul></div>
+      <div class="rule r-green"><h4>Trade</h4><ul>
+        <li>Any two settlements may swap any amounts of any resource, once per round, if both agree.</li>
+        <li>People cannot be traded. They can only defect.</li>
+        <li>Knowledge is the one thing you still have after you give it away.</li>
+      </ul></div>
+      <div class="rule r-green"><h4>Alliance</h4><ul>
+        <li>Both settlements need <b>${ALLY_FLOOR} Trust</b> or more. Both gain <b>+10 Trust</b>.</li>
+        <li>While allied, if either hits zero in a resource the other must cover 20% of theirs.</li>
+        <li>Breaking it costs the breaker <b class="neg">−25 Trust</b>, in public.</li>
+      </ul></div>
+      <div class="rule r-blood"><h4>Defection, earned two ways</h4><ul>
+        <li>Your role decided a round and the council overruled you.</li>
+        <li>Or your settlement holds two of a rivalrous role and could not agree — one of you leaves.</li>
+        <li>The settlement you leave: <b class="neg">−25</b> of what your role governs if you were the only holder, <b class="neg">−10</b> if another remains.</li>
+        <li>The settlement that takes you: <b>+15</b>, or <b>+25</b> if you complete a scaling pair.</li>
+      </ul></div>
+      <div class="rule"><h4>Running a round</h4><ul>
+        <li>Read the scenario: <b>2 min</b></li>
+        <li>Each role argues its own interest: <b>3 min</b></li>
+        <li>Open debate, trade and alliance offers: <b>4 min</b></li>
+        <li>Vote, then defection: <b>2 min</b></li>
+        <li>Reveal and score: <b>4 min</b></li>
+      </ul></div>
+    </div>
+
+    <div class="sec-head"><h2>What each round is really about</h2>
+      <p>Six hardships of settling the southern floodplain, in the order they would actually have bitten.</p></div>
+    <div class="tblwrap"><table><thead><tr><th>Round</th><th>Pressure</th><th>Unit 2 slides</th><th>Decided by</th></tr></thead><tbody>
+    ${ROUNDS.map(r=>`<tr><td><strong>${r.n}. ${esc(r.title)}</strong>
+      <div style="color:var(--ink3);font-style:italic;font-size:12px;margin-top:3px">${esc(r.anchor)}</div></td>
+      <td style="color:var(--ink2)">${["Where to build","A land with no materials","Collective labour","Environmental collapse","Surplus &amp; records","Specialization"][r.n-1]}</td>
+      <td>${r.deck.map(d=>`<span class="slideref"><b>${d.n}</b> ${d.t}</span>`).join(" ")}</td>
+      <td>${r.key.map(k=>chip(k)).join(" ")}</td></tr>`).join("")}
+    </tbody></table></div>
+
+    <p class="note" style="margin-top:20px"><b>One thing to say out loud at the start.</b> Nobody in these six rounds knows they are founding a city. They are trying to get through a bad year. A city is what happens when a settlement survives enough bad years in a row while making a particular set of choices — and every one of those choices had a cost that somebody paid at the time. That is why the settlements do not get their names until the end.</p>
+  </div>`;
+}
+
+function viewWriting(){
+  return `<div class="stack">
+    <div class="sec-head"><h2>Writing task</h2><p>Set after the naming. One page, in role, then out of it.</p></div>
+    <p class="note"><b>Frame it this way:</b> your settlement now has a name it did not choose, given to it by people who came later. You are accounting for the six decisions that produced it — decisions made by people who had no idea they were founding anything. Then, in the last paragraph, stop being them.</p>
+    <div class="sec-head"><h2>Prompts</h2><p>Answer all five. Use the class record for your numbers.</p></div>
+    <ol class="prompt-list">
+      <li><b>Name the round your expertise decided the outcome, and the round it was ignored.</b> What did each one do to your settlement's resources — and, more importantly, to the people living there?</li>
+      <li><b>Find your settlement's worst round.</b> Was the problem the choice itself, or the way your group arrived at it? Those are different failures. Say which one it was and how you know.</li>
+      <li><b>Your roster was worth something every single round.</b> A doubled farmer, a missing crafter, two chiefs arguing, a full council. Say what your composition paid or cost you, and whether you would build the same settlement again.</li>
+      <li><b>Every one of these six problems was new.</b> Nobody had irrigated flat hot ground long enough to salt it; nobody had stored more grain than they could remember. Pick the round where your group was most obviously guessing, and say what you were reasoning from.</li>
+      <li><b>You ended up as Uruk, Eridu, Ur, Girsu — or as an unnamed mound.</b> Argue whether you earned it. Use at least two of your own decisions, one trade or alliance, and one thing that actually happened in Sumer: the levees, the salt, the ration lists, the first tablets, the imported stone.</li>
+    </ol>
+    <div class="sec-head"><h2>What a strong answer does</h2></div>
+    <div class="rules-grid">
+      <div class="rule"><h4>Uses the role, not the game</h4><ul>
+        <li>Argues from what an <em>engar</em> or a <em>damgar</em> would have known.</li>
+        <li>Names barley, canals, lapis, mudbrick — not "resources" and "points".</li>
+      </ul></div>
+      <div class="rule r-gold"><h4>Separates the choice from the process</h4><ul>
+        <li>A good decision reached badly still cost you 15 Trust.</li>
+        <li>The strongest papers notice this is true of real councils too.</li>
+      </ul></div>
+      <div class="rule r-clay"><h4>Connects to real Sumer</h4><ul>
+        <li>One specific anchor, correctly used, beats five vague gestures.</li>
+        <li>Getting a date roughly right matters less than getting the mechanism right.</li>
+      </ul></div>
+    </div>
+  </div>`;
+}
+
+/* ===================== RENDER ===================== */
+function render(){
+  document.getElementById("roundPill").textContent=state.round;
+  document.getElementById("cityPill").textContent=state.groups.length;
+  document.getElementById("stuPill").textContent=
+    state.groups.reduce((a,g)=>a+g.members.length,0)+" / "+(state.classSize||27);
+  document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",String(t.dataset.tab===tab)));
+  document.getElementById("view").innerHTML =
+    tab==="poll"?viewPoll() : tab==="board"?viewBoard() : tab==="play"?viewPlay() : tab==="scenarios"?viewScenarios() : tab==="standings"?viewStandings()
+    : tab==="setup"?viewSetup() : tab==="rules"?viewRules() : viewWriting();
+}
+
+/* ===================== EVENTS ===================== */
+document.addEventListener("click", e=>{
+  const t=e.target.closest("[data-tab]");
+  if(t){ tab=t.dataset.tab; render(); window.scrollTo({top:0,behavior:"instant"}); return; }
+  const b=e.target.closest("[data-act]"); if(!b) return;
+  const a=b.dataset.act, gid=b.dataset.g;
+  const g=gid?state.groups.find(x=>x.id===gid):null, rn=state.round;
+
+  if(a==="choice"){ const rd=g.rounds[rn]=g.rounds[rn]||{used:[]};
+    rd.choice = rd.choice===b.dataset.k?null:b.dataset.k;
+    rd.teacherSet=true; rd.votedBy=null; }
+  else if(a==="skill"){ const rd=g.rounds[rn]=g.rounds[rn]||{used:[]}; rd.used=rd.used||[];
+    const i=rd.used.indexOf(b.dataset.r); if(i>=0) rd.used.splice(i,1); else rd.used.push(b.dataset.r); }
+  else if(a==="cons"){ const rd=g.rounds[rn]=g.rounds[rn]||{used:[]};
+    rd.consensus = rd.consensus===b.dataset.c?null:b.dataset.c; }
+  else if(a==="reveal"){ state.revealed[rn]=!state.revealed[rn]; }
+  else if(a==="next"){ if(state.round<6){state.round++; window.scrollTo({top:0,behavior:"instant"});} }
+  else if(a==="prev"){ if(state.round>1){state.round--; window.scrollTo({top:0,behavior:"instant"});} }
+  else if(a==="goto"){ state.round=parseInt(b.dataset.r,10)||1; tab="play"; window.scrollTo({top:0,behavior:"instant"}); }
+  else if(a==="freedefect"){ state.freeDefect=!state.freeDefect; }
+  else if(a==="defect"){ doDefect(); }
+  else if(a==="trade"){ doTrade(); }
+  else if(a==="ally"){ doAlly(); }
+  else if(a==="break"){ doBreak(); }
+  else if(a==="undo"){ state.events.splice(parseInt(b.dataset.i,10),1); }
+  else if(a==="add"){
+    const inp=document.getElementById("add-"+gid), sel=document.getElementById("role-"+gid);
+    const nm=(inp.value||"").trim(); if(!nm) return;
+    g.members.push({id:newId(),name:nm,role:sel.value,defected:false}); inp.value=""; }
+  else if(a==="bulk"){
+    const ta=document.getElementById("bulk-"+gid);
+    const names=(ta.value||"").split(/[\n,]/).map(s=>s.trim()).filter(Boolean);
+    if(!names.length) return;
+    names.forEach(nm=>g.members.push({id:newId(),name:nm,role:"chief",defected:false})); ta.value=""; }
+  else if(a==="rm"){ g.members=g.members.filter(m=>m.id!==b.dataset.m); }
+  else if(a==="reset"){
+    if(!confirm("Remove every student and clear all choices, trades and alliances? This cannot be undone.")) return;
+    state=seedState(); }
+  else if(a==="addgroup"){
+    let i=state.groups.length+1, name="Settlement "+i;
+    while(state.groups.some(x=>x.name===name)){ i++; name="Settlement "+i; }
+    state.groups.push({id:"g"+Date.now().toString(36)+state.groups.length, name, school:"settlement", members:[], rounds:{}}); }
+  else if(a==="rmgroup"){
+    if(g.members.length && !confirm("Remove "+g.name+" and its "+g.members.length+" student(s)? Their scores go with them.")) return;
+    if(state.groups.length<=2){ alert("Keep at least two settlements — the game needs someone to trade with."); return; }
+    state.groups=state.groups.filter(x=>x.id!==g.id);
+    state.events=state.events.filter(ev=>ev.a!==g.id&&ev.b!==g.id&&ev.by!==g.id&&ev.with!==g.id&&ev.from!==g.id&&ev.to!==g.id); }
+  else if(a==="move"){ doMove(); }
+  else if(a==="pickgroup"){ setMyGroup(b.dataset.g||""); }
+  else if(a==="vote"){ submitVote(myGroupId(), b.dataset.k); return; }
+  else if(a==="export"){ doExport(); return; }
+  save(); render();
+});
+
+document.addEventListener("change", e=>{
+  const el=e.target.closest("[data-act]"); if(!el) return;
+  const a=el.dataset.act, g=el.dataset.g?state.groups.find(x=>x.id===el.dataset.g):null;
+  if(a==="setrole"&&g){ const m=g.members.find(x=>x.id===el.dataset.m); if(m) m.role=el.value; }
+  else if(a==="rename"&&g){ const v=(el.value||"").trim(); g.name=v||g.name; }
+  else if(a==="size"){ const v=parseInt(el.value,10); state.classSize=(isFinite(v)&&v>0)?v:27; }
+  else return;
+  save(); render();
+});
+
+function playStarted(){
+  return state.groups.some(g=>Object.keys(g.rounds||{}).some(k=>g.rounds[k]&&g.rounds[k].choice));
+}
+function doMove(){
+  const who=document.getElementById("mvWho").value, toId=document.getElementById("mvTo").value;
+  if(!who||!toId) return;
+  let from=null, mem=null;
+  state.groups.forEach(g=>g.members.forEach(m=>{ if(m.id===who){from=g; mem=m;} }));
+  const to=state.groups.find(g=>g.id===toId);
+  if(!from||!mem||!to||from.id===to.id) return;
+  if(mem.defected){ alert(mem.name+" has already used their one switch and cannot move again."); return; }
+  const started=playStarted();
+  if(started && !confirm(mem.name+" will be locked into "+to.name+" for the rest of the game. This is their one switch. Continue?")) return;
+  from.members=from.members.filter(m=>m.id!==mem.id);
+  if(started) mem.defected=true;          // one switch only, once the game is running
+  to.members.push(mem);
+  if(started) state.events.push({type:"defect", round:state.round, name:mem.name, role:mem.role,
+    from:from.id, to:to.id, fromAmt:0, toAmt:0, moved:true});
+}
+function doTrade(){
+  const a=document.getElementById("trA").value, b=document.getElementById("trB").value;
+  if(!a||!b||a===b){ alert("Pick two different settlements."); return; }
+  const giveAmt=Math.abs(parseInt(document.getElementById("trGiveAmt").value,10)||0);
+  const getAmt=Math.abs(parseInt(document.getElementById("trGetAmt").value,10)||0);
+  if(!giveAmt&&!getAmt){ alert("Enter an amount on at least one side."); return; }
+  state.events.push({type:"trade", round:state.round, a, b,
+    giveRes:document.getElementById("trGiveRes").value, giveAmt,
+    getRes:document.getElementById("trGetRes").value, getAmt});
+}
+function doAlly(){
+  const a=document.getElementById("alA").value, b=document.getElementById("alB").value;
+  if(!a||!b||a===b){ alert("Pick two different settlements."); return; }
+  if(alliesOf(a).includes(b)){ alert("They are already allied."); return; }
+  const ra=resourcesAt(state.groups.find(g=>g.id===a)).res;
+  const rb=resourcesAt(state.groups.find(g=>g.id===b)).res;
+  if(ra.trust<ALLY_FLOOR||rb.trust<ALLY_FLOOR){
+    alert("Both settlements need at least "+ALLY_FLOOR+" Trust. "+
+      nameOf(a)+" has "+ra.trust+", "+nameOf(b)+" has "+rb.trust+"."); return; }
+  state.events.push({type:"ally", round:state.round, a, b});
+}
+function doBreak(){
+  const a=document.getElementById("alA").value, b=document.getElementById("alB").value;
+  if(!a||!b||a===b) return;
+  if(!alliesOf(a).includes(b)){ alert("They are not allied."); return; }
+  state.events.push({type:"break", round:state.round, by:a, with:b});
+}
+function doDefect(){
+  const who=document.getElementById("defWho").value, toId=document.getElementById("defTo").value;
+  if(!who||!toId) return;
+  let from=null, mem=null;
+  state.groups.forEach(g=>g.members.forEach(m=>{ if(m.id===who){from=g; mem=m;} }));
+  const to=state.groups.find(g=>g.id===toId);
+  if(!from||!mem||!to||from.id===to.id) return;
+  if(!state.freeDefect&&!earnedDefection(from,mem)){
+    alert(mem.name+" has not earned the right to cross yet."); return; }
+  const fromHeld=rolesHeld(from)[mem.role]||0, toHeld=rolesHeld(to)[mem.role]||0;
+  const fromAmt = fromHeld>1 ? -10 : -25;
+  const toAmt = (toHeld>0 && ROLE[mem.role].kind==="scale") ? 25 : 15;
+  from.members=from.members.filter(m=>m.id!==mem.id);
+  mem.defected=true; to.members.push(mem);
+  state.events.push({type:"defect", round:state.round, name:mem.name, role:mem.role,
+    from:from.id, to:to.id, fromAmt, toAmt});
+}
+
+function lines(){
+  const L=[];
+  L.push("BEFORE THE NAMES - CLASS RECORD");
+  L.push("Settling Mesopotamia - six hardships. After round "+state.round+" of 6.");
+  L.push("");
+  state.groups.forEach(g=>{
+    const {res}=resourcesAt(g), comp=composition(g);
+    L.push("=".repeat(58));
+    L.push(g.name.toUpperCase()+"   SCORE "+finalScore(g));
+    L.push("-".repeat(58));
+    L.push("Resources: "+RES.map(r=>r.name+" "+res[r.id]).join(" | "));
+    L.push("Roster:");
+    g.members.forEach(m=>L.push("   "+m.name+" - "+ROLE[m.role].name+(m.defected?"  [defected]":"")));
+    const miss=missingRoles(g);
+    if(miss.length) L.push("Missing roles: "+miss.map(r=>ROLE[r].name).join(", "));
+    if(comp.lines.length){ L.push("Roster effects each round:");
+      comp.lines.forEach(l=>L.push("   "+l.what+"  ("+fmtEff(l.eff)+")")); }
+    const al=alliesOf(g.id); if(al.length) L.push("Allied with: "+al.map(nameOf).join(", "));
+    L.push("");
+    ROUNDS.forEach(r=>{
+      const rd=g.rounds[r.n];
+      if(!rd||!rd.choice){ L.push("Round "+r.n+" ("+r.title+"): not played"); return; }
+      const {eff,parts}=roundEffect(g,r.n);
+      L.push("Round "+r.n+" ("+r.title+"): choice "+rd.choice+", "+(rd.consensus||"no consensus recorded"));
+      L.push("   net "+fmtEff(eff));
+      parts.forEach(p=>L.push("      "+p.t+": "+fmtEff(p.e)));
+    });
+    const f=fateOf(g);
+    if(f){ L.push(""); L.push("What they built: "+f.label); }
+    L.push("");
+  });
+  const evs=state.events.filter(e=>e.type!=="defect");
+  if(evs.length){ L.push("=".repeat(58)); L.push("TRADES AND ALLIANCES");
+    evs.forEach(ev=>{
+      if(ev.type==="trade") L.push("  Round "+ev.round+": "+nameOf(ev.a)+" gave "+ev.giveAmt+" "+ROLE_RES(ev.giveRes)+" to "+nameOf(ev.b)+" for "+ev.getAmt+" "+ROLE_RES(ev.getRes));
+      if(ev.type==="ally") L.push("  Round "+ev.round+": "+nameOf(ev.a)+" allied with "+nameOf(ev.b));
+      if(ev.type==="break") L.push("  Round "+ev.round+": "+nameOf(ev.by)+" broke with "+nameOf(ev.with));
+    }); L.push(""); }
+  const defs=state.events.filter(e=>e.type==="defect");
+  if(defs.length){ L.push("=".repeat(58)); L.push("DEFECTIONS");
+    defs.forEach(d=>L.push("  Round "+d.round+": "+d.name+" ("+ROLE[d.role].name+") "+nameOf(d.from)+" -> "+nameOf(d.to))); }
+  return L.join("\n");
+}
+async function doExport(){
+  const text=lines(), name="before-the-names-class-record.txt";
+  let dl=null; try{ dl=await window.claude?.use?.("downloads") ?? null; }catch(e){}
+  if(dl){ try{ await dl.save({filename:name, data:text}); return; }catch(e){} }
+  try{                                  // self-hosted: an ordinary file download
+    const url=URL.createObjectURL(new Blob([text],{type:"text/plain;charset=utf-8"}));
+    const a=document.createElement("a"); a.href=url; a.download=name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000); return;
+  }catch(e){}
+  try{ await navigator.clipboard.writeText(text); alert("Class record copied to the clipboard."); }
+  catch(e){ alert("Could not save here — the record is in the browser console."); console.log(text); }
+}
+
+try{
+  window.claude?.hot?.snapshot?.(()=>({state,tab}));
+  const start=d=>{ if(d&&d.state&&Array.isArray(d.state.groups)){ state=d.state; tab=d.tab||tab; } boot(); };
+  if(window.claude?.hot?.ready) window.claude.hot.ready(start); else start(window.claude?.hot?.data??{});
+}catch(e){ boot(); }
+</script>
+
+</body>
+</html>
